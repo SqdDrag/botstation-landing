@@ -88,10 +88,14 @@ nav.desktop a:hover{
 
 .burger{display:flex;flex-direction:column;gap:.5rem;width:2.5rem;cursor:pointer;z-index:60;padding-top:.25rem}
 .burger span{height:4px;width:100%;background:#fff;border-radius:1rem;transition:transform .2s,opacity .2s}
+.burger.open span:nth-child(1){transform:translateY(12px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-12px) rotate(-45deg)}
 @media(min-width:768px){.burger{display:none}}
 .mobile-menu{
   position:fixed;inset:0 0 auto 0;z-index:50;
   background:rgba(55,52,104,.92);
+  -webkit-backdrop-filter:blur(16px);
   backdrop-filter:blur(16px);
   border:2px solid rgba(255,255,255,.1);
   border-top:none;border-radius:0 0 1.5rem 1.5rem;
@@ -106,6 +110,7 @@ nav.desktop a:hover{
 /* ---------- общие элементы ---------- */
 .glass{
   border-radius:2rem;
+  -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   background:linear-gradient(to bottom right,rgba(255,255,255,.01),rgba(255,255,255,.05));
   border:2px solid rgba(255,255,255,.05);
@@ -146,8 +151,8 @@ nav.desktop a:hover{
 
 /* ---------- hero ---------- */
 .hero{text-align:center;padding:5.5rem 1rem 3rem}
-.hero h1{font-weight:700;font-size:3rem}
-.hero p{font-weight:300;font-size:1.5rem;color:rgba(255,255,255,.8);margin-top:.25rem}
+.hero h1{font-weight:700;font-size:clamp(2.25rem,9vw,3rem)}
+.hero p{font-weight:300;font-size:clamp(1.1rem,5vw,1.5rem);color:rgba(255,255,255,.8);margin-top:.25rem}
 @media(min-width:768px){
   .hero h1{font-size:3.75rem}
   .hero p{font-size:1.875rem}
@@ -263,6 +268,7 @@ nav.desktop a:hover{
 footer{
   width:100%;padding:3rem 0;margin-top:5rem;
   background:rgba(0,0,0,.07);opacity:.85;
+  -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   border-radius:2rem 2rem 0 0;
 }
@@ -279,6 +285,33 @@ footer{
 .footer-col a{font-weight:300;color:rgba(255,255,255,.6);transition:color .2s;display:block;margin-top:.35rem}
 .footer-col a:hover{color:#fff}
 .copyright{display:flex;justify-content:center;font-weight:300;opacity:.4;font-size:.875rem;padding-top:2rem}
+
+/* ---------- мобильная версия ---------- */
+@media(max-width:767px){
+  .hero{padding:4rem 1rem 2.5rem}
+  .hero-cta{margin-bottom:4rem}
+  .stat-value{font-size:2.5rem}
+  .stat-label{font-size:.95rem;text-align:center;padding:0 .5rem}
+  .templates-status{padding:.75rem .5rem}
+  .status-row{padding:.5rem .75rem}
+  .status-row .left{gap:.85rem;min-width:0}
+  .status-row .left>div{display:flex;flex-direction:column;min-width:0}
+  .status-row .name{font-size:1.1rem}
+  .status-row .meta{font-size:.9rem}
+  .tpl-card{padding:1.5rem}
+  .pricing{gap:1.25rem}
+  .pricing > div:last-child{margin-top:0}
+  .price-card-wrap.tilt-l{transform:rotate(-1deg)}
+  .price-card-wrap.tilt-l:hover{transform:rotate(-1deg) scale(1.01)}
+  .price-card-wrap.tilt-r{transform:rotate(1deg)}
+  .price-card-wrap.tilt-r:hover{transform:rotate(1deg) scale(1.01)}
+  .price-card{padding:1.5rem}
+  .price-card .name,.price-card .price{font-size:1.875rem}
+  .faq-q{padding:1rem 1.25rem}
+  .faq-a p{padding:0 1.5rem 1rem}
+  .section-title{margin-top:3rem}
+  footer{margin-top:3.5rem;padding:2.5rem 0;border-radius:1.5rem 1.5rem 0 0}
+}
 </style>
 </head>
 <body>
@@ -504,8 +537,14 @@ document.querySelectorAll('.faq-item').forEach(item => {
 // мобильное меню
 const burger = document.getElementById('burger');
 const menu = document.getElementById('mobileMenu');
-burger.addEventListener('click', () => menu.classList.toggle('open'));
-menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+burger.addEventListener('click', () => {
+  menu.classList.toggle('open');
+  burger.classList.toggle('open');
+});
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  menu.classList.remove('open');
+  burger.classList.remove('open');
+}));
 
 // появление при скролле
 const io = new IntersectionObserver(entries => {
