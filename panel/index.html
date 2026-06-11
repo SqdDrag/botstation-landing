@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BotStation — панель управления</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:300;src:url(https://botstation.xyz/fonts/FindSansPro-Light.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:400;src:url(https://botstation.xyz/fonts/FindSansPro-Regular.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:500;src:url(https://botstation.xyz/fonts/FindSansPro-Medium.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:700;src:url(https://botstation.xyz/fonts/FindSansPro-Bold.woff2) format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#232142;color:#fff;min-height:100vh;
+  font-family:FindSansPro,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.5;overflow-x:hidden;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:linear-gradient(#54519e,#232142);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+a{color:inherit;text-decoration:none}
+.page{position:relative;z-index:1;max-width:72rem;margin:0 auto;padding:1rem 1rem 4rem}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0 1.5rem}
+.logo{display:flex;align-items:center;gap:.75rem;font-weight:600;font-size:1.25rem}
+.logo-mark{
+  width:2.75rem;height:2.75rem;border-radius:1rem;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.2);
+}
+.userbox{display:flex;align-items:center;gap:1rem;font-weight:300}
+.userbox a{opacity:.7;cursor:pointer}
+.userbox a:hover{opacity:1}
+
+.glass{
+  border-radius:1.5rem;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  background:linear-gradient(to bottom right,rgba(255,255,255,.03),rgba(255,255,255,.07));
+  border:1px solid rgba(255,255,255,.12);
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  background:rgba(255,255,255,.95);color:#403a78;font-weight:600;
+  border:none;border-radius:.9rem;padding:.7rem 1.6rem;cursor:pointer;
+  font-family:inherit;font-size:1rem;transition:transform .15s;
+}
+.btn:hover{transform:scale(1.04)}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+.btn.ghost{
+  background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:400;
+}
+.btn.small{padding:.45rem 1.1rem;font-size:.9rem;border-radius:.7rem}
+.btn.danger{background:rgba(248,113,113,.16);border:1px solid rgba(248,113,113,.45);color:#fca5a5}
+.btn.ok{background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.4);color:#86efac}
+
+h2{font-weight:500;font-size:1.35rem;margin:2.2rem 0 1rem;opacity:.9}
+.muted{opacity:.6;font-weight:300}
+.hidden{display:none!important}
+
+/* вход */
+#login{min-height:80vh;display:flex;align-items:center;justify-content:center}
+.login-card{padding:3rem;text-align:center;max-width:26rem;width:100%}
+.login-card .logo-mark{width:4.5rem;height:4.5rem;border-radius:1.4rem;margin:0 auto 1.25rem}
+.login-card h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem}
+.login-card p{font-weight:300;opacity:.75;margin-bottom:1.6rem}
+.login-hint{margin-top:1.2rem;font-size:.9rem}
+
+/* профиль */
+.profile-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:768px){.profile-grid{grid-template-columns:1fr 1fr}}
+.pcard{padding:1.4rem 1.6rem}
+.pcard .label{font-weight:300;opacity:.6;font-size:.9rem}
+.pcard .value{font-size:1.5rem;font-weight:500;margin-top:.15rem;word-break:break-all}
+.copy{cursor:pointer;opacity:.65;font-size:.85rem}
+.copy:hover{opacity:1}
+
+/* боты */
+.bots{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:768px){.bots{grid-template-columns:1fr 1fr}}
+.bot-card{padding:1.3rem 1.5rem;display:flex;flex-direction:column;gap:.7rem}
+.bot-head{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.bot-name{font-weight:500;font-size:1.15rem}
+.chip{
+  display:inline-block;padding:.15rem .8rem;border-radius:2rem;font-size:.82rem;font-weight:300;
+  background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.18);
+}
+.dot{display:inline-block;width:.6rem;height:.6rem;border-radius:50%;margin-right:.4rem}
+.dot.on{background:#22c55e;animation:pulse 2s infinite}
+.dot.off{background:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.bot-meta{font-weight:300;opacity:.75;font-size:.95rem}
+.bot-actions{display:flex;gap:.6rem;margin-top:.2rem}
+
+/* админка */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+@media(min-width:768px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat{padding:1.1rem 1.3rem}
+.stat .label{font-weight:300;opacity:.6;font-size:.85rem}
+.stat .value{font-size:1.6rem;font-weight:500}
+.rowline{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.7rem 1.2rem;border-radius:1rem;
+}
+.rowline:hover{background:rgba(255,255,255,.04)}
+.rowline .left{display:flex;align-items:center;gap:.8rem;min-width:0;flex-wrap:wrap}
+.list{padding:.5rem}
+.price-row{display:flex;align-items:center;gap:.8rem;padding:.5rem 1.2rem}
+.price-row input{
+  width:6rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  border-radius:.6rem;color:#fff;padding:.4rem .7rem;font-family:inherit;font-size:1rem;
+}
+.toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:50;
+  background:rgba(35,33,66,.95);border:1px solid rgba(255,255,255,.25);
+  border-radius:1rem;padding:.8rem 1.6rem;opacity:0;transition:opacity .25s;pointer-events:none;
+  max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1}
+
+/* создание бота */
+.h2row{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:2.2rem 0 1rem}
+.h2row h2{margin:0}
+.create-card{padding:1.5rem 1.7rem;display:flex;flex-direction:column;gap:1rem;margin-bottom:1rem}
+.tpl-pick{display:flex;flex-wrap:wrap;gap:.6rem}
+.tpl-opt{
+  cursor:pointer;padding:.55rem 1.1rem;border-radius:.8rem;font-weight:300;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
+  transition:background .15s;
+}
+.tpl-opt:hover{background:rgba(255,255,255,.12)}
+.tpl-opt.sel{background:rgba(255,255,255,.92);color:#403a78;font-weight:600}
+.tpl-summary{min-height:1.4em}
+.field-token{
+  width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  border-radius:.7rem;color:#fff;padding:.6rem .9rem;font-family:inherit;font-size:1rem;
+}
+.field-token::placeholder{color:rgba(255,255,255,.4)}
+
+/* продление в карточке */
+.pay-panel{
+  border-top:1px solid rgba(255,255,255,.12);padding-top:.8rem;margin-top:.3rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.pay-grid{display:flex;flex-wrap:wrap;gap:.5rem}
+
+/* настройки бота */
+.set-field label{display:block;font-weight:300;opacity:.7;font-size:.9rem;margin-bottom:.3rem}
+.set-field textarea{
+  width:100%;min-height:4.2em;resize:vertical;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  border-radius:.7rem;color:#fff;padding:.55rem .8rem;font-family:inherit;font-size:.95rem;
+}
+.trow{display:flex;gap:.4rem;align-items:center;margin-bottom:.4rem}
+.trow input{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  border-radius:.6rem;color:#fff;padding:.4rem .6rem;font-family:inherit;font-size:.92rem;
+}
+.trow .t-title{flex:1;min-width:7rem}
+.trow .t-num{width:5.5rem}
+.trow .t-del{cursor:pointer;opacity:.6;padding:.2rem .4rem}
+.trow .t-del:hover{opacity:1}
+.bot-stats{font-weight:300;opacity:.85;font-size:.92rem}
+.bot-error{font-weight:300;font-size:.92rem;color:#fca5a5}
+
+/* пополнение баланса */
+.topup-row{display:flex;gap:.5rem;align-items:center;margin-top:.7rem;flex-wrap:wrap}
+.topup-row input{
+  width:7rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  border-radius:.7rem;color:#fff;padding:.5rem .8rem;font-family:inherit;font-size:1rem;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="logo" href="https://botstation.xyz">
+      <span class="logo-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg></span>
+      BotStation
+    </a>
+    <div class="userbox hidden" id="userbox">
+      <span id="userName"></span>
+      <a id="logout">Выйти</a>
+    </div>
+  </header>
+
+  <!-- ВХОД -->
+  <div id="login">
+    <div class="glass login-card">
+      <div class="logo-mark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg></div>
+      <h1>Панель управления</h1>
+      <p>Профиль, ваши боты и управление — вход через Telegram, без паролей.</p>
+      <button class="btn" id="loginBtn">Войти через Telegram</button>
+      <div class="login-hint muted hidden" id="loginHint">
+        Подтвердите вход в Telegram — страница обновится сама.
+      </div>
+      <div class="login-hint muted">
+        Панель в бете. Если вход не срабатывает — всё то же самое доступно
+        в боте <a href="https://t.me/BotStationRUBot" style="text-decoration:underline">@BotStationRUBot</a>.
+      </div>
+    </div>
+  </div>
+
+  <!-- ПАНЕЛЬ -->
+  <div id="app" class="hidden">
+    <h2>Профиль</h2>
+    <div class="profile-grid">
+      <div class="glass pcard">
+        <div class="label">Баланс</div>
+        <div class="value" id="pBalance">—</div>
+        <div class="topup-row">
+          <input type="number" id="topupAmount" min="1" max="1000" step="1" value="10">
+          <button class="btn small" id="topupBtn">Пополнить USDT</button>
+        </div>
+        <div class="muted" style="font-size:.9rem;margin-top:.5rem" id="topupStatus">
+          Оплата через @CryptoBot · с баланса подписки продлеваются автоматически
+        </div>
+      </div>
+      <div class="glass pcard">
+        <div class="label">Реферальная программа</div>
+        <div class="value" style="font-size:1.1rem" id="pRef">—</div>
+        <div class="muted copy" id="pRefLink" title="Скопировать">— </div>
+      </div>
+    </div>
+
+    <div class="h2row">
+      <h2>Мои боты</h2>
+      <button class="btn small" id="createToggle">＋ Создать бота</button>
+    </div>
+
+    <div class="glass create-card hidden" id="createCard">
+      <div>
+        <div class="muted" style="margin-bottom:.5rem">Шаблон</div>
+        <div class="tpl-pick" id="tplPick"></div>
+        <div class="muted tpl-summary" id="tplSummary" style="margin-top:.5rem"></div>
+      </div>
+      <div>
+        <div class="muted" style="margin-bottom:.5rem">
+          Токен бота — @BotFather → /newbot (или /mybots → API Token)
+        </div>
+        <input class="field-token" id="tokenInput" placeholder="123456789:AAH…"
+               autocomplete="off" spellcheck="false">
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <button class="btn" id="createBtn">Подключить</button>
+        <span class="muted" id="createHint"></span>
+      </div>
+    </div>
+
+    <div class="bots" id="botList"></div>
+    <div class="muted hidden" id="noBots">Ботов пока нет — нажмите «Создать бота».</div>
+
+    <!-- АДМИНКА -->
+    <div id="adminBlock" class="hidden">
+      <h2>Админка платформы</h2>
+      <div class="stats-grid" id="adminStats"></div>
+
+      <h2>Все боты</h2>
+      <div class="glass list" id="adminBots"></div>
+
+      <h2>Цены шаблонов, USDT/мес</h2>
+      <div class="glass list" id="adminPrices"></div>
+
+      <h2>Последние платежи</h2>
+      <div class="glass list" id="adminPayments"></div>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API = location.hostname.endsWith('botstation.xyz') ? 'https://api.botstation.xyz' : '';
+const $ = id => document.getElementById(id);
+let TOKEN = localStorage.getItem('bs_token') || '';
+let ME = null;
+
+function toast(text) {
+  const t = $('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function api(path, opts = {}) {
+  const headers = Object.assign(
+    {'Content-Type': 'application/json'},
+    TOKEN ? {Authorization: 'Bearer ' + TOKEN} : {},
+  );
+  const r = await fetch(API + path, Object.assign({headers}, opts));
+  if (r.status === 401) { doLogout(); throw new Error('Сессия истекла — войдите снова'); }
+  if (!r.ok) throw new Error(await r.text() || ('Ошибка ' + r.status));
+  return r.json();
+}
+
+// ── вход ──────────────────────────────────────────────────────────────
+let pollTimer = null;
+
+$('loginBtn').addEventListener('click', async () => {
+  try {
+    const {code, url} = await api('/api/auth/start', {method: 'POST'});
+    window.open(url, '_blank');
+    $('loginHint').classList.remove('hidden');
+    $('loginBtn').disabled = true;
+    let tries = 0;
+    pollTimer = setInterval(async () => {
+      if (++tries > 150) { clearInterval(pollTimer); $('loginBtn').disabled = false; return; }
+      try {
+        const res = await api('/api/auth/poll?code=' + code);
+        if (res.token) {
+          clearInterval(pollTimer);
+          TOKEN = res.token;
+          localStorage.setItem('bs_token', TOKEN);
+          await loadApp();
+        } else if (res.expired) {
+          clearInterval(pollTimer);
+          $('loginBtn').disabled = false;
+          toast('Код устарел — попробуйте ещё раз');
+        }
+      } catch (e) {}
+    }, 2000);
+  } catch (e) {
+    toast(/fetch/i.test(e.message)
+      ? 'Сервер панели ещё не открыт — загляните позже или управляйте ботами в @BotStationRUBot'
+      : e.message);
+  }
+});
+
+function doLogout() {
+  TOKEN = ''; ME = null;
+  localStorage.removeItem('bs_token');
+  $('app').classList.add('hidden');
+  $('userbox').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  $('loginBtn').disabled = false;
+  $('loginHint').classList.add('hidden');
+}
+$('logout').addEventListener('click', doLogout);
+
+// ── панель ────────────────────────────────────────────────────────────
+const fmtDate = iso => iso ? new Date(iso).toLocaleString('ru-RU',
+  {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) : '—';
+
+function subLine(b) {
+  if (b.is_demo) return 'демо-бот платформы';
+  if (b.expired) return 'подписка истекла';
+  if (b.hours_left < 48) return `подписка ещё ${Math.max(1, Math.round(b.hours_left))} ч`;
+  return 'подписка до ' + fmtDate(b.paid_until);
+}
+
+async function refreshAll() {
+  await Promise.all([loadBots(), ME.is_admin ? loadAdmin() : null]);
+}
+
+function botCard(b, admin = false) {
+  const div = document.createElement('div');
+  div.className = 'glass bot-card';
+  const owner = admin ? `<div class="bot-meta">владелец: ${b.owner_username ? '@' + b.owner_username : ''} <span class="muted">${b.owner_tg_id}</span></div>` : '';
+  const userBtns = admin ? '' : `
+      <button class="btn small ghost" data-act="set">Настроить</button>
+      <button class="btn small ghost" data-act="pay">Продлить</button>
+      ${b.is_demo ? '' : `<button class="btn small danger" data-act="del">Удалить</button>`}`;
+  const stats = (b.stats && b.stats.length)
+    ? `<div class="bot-stats">${b.stats.map(([l, v]) => `${l}: <b>${v}</b>`).join(' · ')}</div>` : '';
+  const err = (!b.running && b.last_error)
+    ? `<div class="bot-error">⚠ ${b.last_error}</div>` : '';
+  div.innerHTML = `
+    <div class="bot-head">
+      <span class="bot-name"><span class="dot ${b.running ? 'on' : 'off'}"></span>@${b.username}</span>
+      <span class="chip">${b.type_title}</span>
+    </div>
+    <div class="bot-meta">${subLine(b)}</div>
+    ${stats}
+    ${err}
+    ${owner}
+    <div class="bot-actions" style="flex-wrap:wrap">
+      ${b.running
+        ? `<button class="btn small danger" data-act="stop">Остановить</button>`
+        : `<button class="btn small ok" data-act="start">Запустить</button>`}
+      ${userBtns}
+      <a class="btn small ghost" href="https://t.me/${b.username}" target="_blank">Открыть</a>
+    </div>
+    <div class="pay-panel hidden" data-pay-panel></div>
+    <div class="pay-panel hidden" data-set-panel></div>`;
+
+  div.querySelector('[data-act="start"], [data-act="stop"]').addEventListener('click', async ev => {
+    const act = ev.target.dataset.act;
+    ev.target.disabled = true;
+    try {
+      const base = admin ? '/api/admin/bots/' : '/api/bots/';
+      await api(base + b.id + '/' + act, {method: 'POST'});
+      toast(act === 'start' ? 'Бот запущен' : 'Бот остановлен');
+      await refreshAll();
+    } catch (e) { toast(e.message); ev.target.disabled = false; }
+  });
+
+  if (admin) return div;
+
+  // продление подписки с баланса
+  div.querySelector('[data-act="pay"]').addEventListener('click', async ev => {
+    const panel = div.querySelector('[data-pay-panel]');
+    if (!panel.classList.contains('hidden')) { panel.classList.add('hidden'); return; }
+    ev.target.disabled = true;
+    try {
+      const o = await api('/api/bots/' + b.id + '/pay');
+      panel.innerHTML = `
+        <div class="muted">Баланс: <b>${o.balance.toFixed(2)} USDT</b> ·
+          пополнение — в <a href="${ME.bot_link}" target="_blank" style="text-decoration:underline">боте</a></div>
+        <div class="pay-grid">
+          ${o.options.map(p => `
+            <button class="btn small ghost" data-months="${p.months}">
+              ${p.months} мес · ${p.total} USDT${p.discount ? ` (−${p.discount}%)` : ''}
+            </button>`).join('')}
+        </div>`;
+      panel.querySelectorAll('[data-months]').forEach(btn => btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try {
+          const r = await api('/api/bots/' + b.id + '/pay', {
+            method: 'POST',
+            body: JSON.stringify({months: parseInt(btn.dataset.months)}),
+          });
+          toast(`Оплачено! Подписка до ${fmtDate(r.paid_until)}, остаток ${r.balance.toFixed(2)} USDT`);
+          ME.balance = r.balance;
+          $('pBalance').textContent = r.balance.toFixed(2) + ' USDT';
+          await refreshAll();
+        } catch (e) { toast(e.message); btn.disabled = false; }
+      }));
+      panel.classList.remove('hidden');
+    } catch (e) { toast(e.message); }
+    ev.target.disabled = false;
+  });
+
+  // настройки шаблона
+  div.querySelector('[data-act="set"]').addEventListener('click', async ev => {
+    const panel = div.querySelector('[data-set-panel]');
+    if (!panel.classList.contains('hidden')) { panel.classList.add('hidden'); return; }
+    ev.target.disabled = true;
+    try {
+      const view = await api('/api/bots/' + b.id + '/settings');
+      renderSettings(panel, b, view);
+      panel.classList.remove('hidden');
+    } catch (e) { toast(e.message); }
+    ev.target.disabled = false;
+  });
+
+  // удаление: второй клик подтверждает
+  const delBtn = div.querySelector('[data-act="del"]');
+  if (delBtn) {
+    let armed = false;
+    delBtn.addEventListener('click', async () => {
+      if (!armed) {
+        armed = true;
+        delBtn.textContent = 'Точно удалить?';
+        setTimeout(() => { armed = false; delBtn.textContent = 'Удалить'; }, 4000);
+        return;
+      }
+      delBtn.disabled = true;
+      try {
+        await api('/api/bots/' + b.id + '/delete', {method: 'POST'});
+        toast(`Бот @${b.username} отключён от платформы`);
+        await refreshAll();
+      } catch (e) { toast(e.message); delBtn.disabled = false; }
+    });
+  }
+  return div;
+}
+
+// ── настройки шаблона ─────────────────────────────────────────────────
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+function tariffRow(t = {title: '', days: 30, stars: 100}) {
+  const row = document.createElement('div');
+  row.className = 'trow';
+  row.innerHTML = `
+    <input class="t-title" placeholder="Название" value="${esc(t.title)}">
+    <input class="t-num" type="number" min="1" placeholder="дней" value="${t.days}" title="Дней доступа">
+    <input class="t-num" type="number" min="1" placeholder="⭐" value="${t.stars}" title="Цена в Stars">
+    <span class="t-del" title="Удалить">✕</span>`;
+  row.querySelector('.t-del').addEventListener('click', () => row.remove());
+  return row;
+}
+
+function renderSettings(panel, b, view) {
+  panel.innerHTML = '';
+  if (view.note) {
+    const n = document.createElement('div');
+    n.className = 'muted';
+    n.textContent = view.note;
+    panel.appendChild(n);
+  }
+  const inputs = {};
+  view.fields.forEach(f => {
+    const wrap = document.createElement('div');
+    wrap.className = 'set-field';
+    if (f.type === 'text') {
+      wrap.innerHTML = `<label>${f.label}</label><textarea maxlength="${f.max}"></textarea>`;
+      wrap.querySelector('textarea').value = view.values[f.key] || '';
+      inputs[f.key] = () => wrap.querySelector('textarea').value;
+    } else if (f.type === 'strings') {
+      wrap.innerHTML = `<label>${f.label} — каждый с новой строки (до ${f.max_items})</label>
+        <textarea></textarea>`;
+      wrap.querySelector('textarea').value = (view.values[f.key] || []).join('\n');
+      inputs[f.key] = () => wrap.querySelector('textarea').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+    } else if (f.type === 'tariffs') {
+      wrap.innerHTML = `<label>${f.label} (до ${f.max_items})</label><div data-rows></div>`;
+      const rows = wrap.querySelector('[data-rows]');
+      (view.values[f.key] || []).forEach(t => rows.appendChild(tariffRow(t)));
+      const add = document.createElement('button');
+      add.className = 'btn small ghost';
+      add.textContent = '＋ тариф';
+      add.addEventListener('click', () => {
+        if (rows.children.length >= f.max_items) { toast(`Максимум ${f.max_items}`); return; }
+        rows.appendChild(tariffRow());
+      });
+      wrap.appendChild(add);
+      inputs[f.key] = () => [...rows.children].map(r => {
+        const nums = r.querySelectorAll('.t-num');
+        return {
+          title: r.querySelector('.t-title').value.trim(),
+          days: parseInt(nums[0].value),
+          stars: parseInt(nums[1].value),
+        };
+      });
+    }
+    panel.appendChild(wrap);
+  });
+  const save = document.createElement('button');
+  save.className = 'btn small';
+  save.textContent = 'Сохранить';
+  save.addEventListener('click', async () => {
+    save.disabled = true;
+    const values = {};
+    Object.entries(inputs).forEach(([k, fn]) => values[k] = fn());
+    try {
+      await api('/api/bots/' + b.id + '/settings', {
+        method: 'POST', body: JSON.stringify({values}),
+      });
+      toast('Настройки сохранены — действуют сразу');
+      panel.classList.add('hidden');
+    } catch (e) { toast(e.message); }
+    save.disabled = false;
+  });
+  panel.appendChild(save);
+}
+
+// ── пополнение баланса ────────────────────────────────────────────────
+let topupTimer = null;
+
+$('topupBtn').addEventListener('click', async () => {
+  const amount = parseFloat($('topupAmount').value);
+  if (!(amount >= 1 && amount <= 1000)) { toast('Сумма — от 1 до 1000 USDT'); return; }
+  $('topupBtn').disabled = true;
+  try {
+    const {payment_id, url} = await api('/api/balance/topup', {
+      method: 'POST', body: JSON.stringify({amount}),
+    });
+    window.open(url, '_blank');
+    $('topupStatus').innerHTML =
+      `Оплатите счёт в @CryptoBot — зачисление произойдёт автоматически. ` +
+      `<a href="${url}" target="_blank" style="text-decoration:underline">Открыть счёт</a>`;
+    clearInterval(topupTimer);
+    let tries = 0;
+    topupTimer = setInterval(async () => {
+      if (++tries > 144) { clearInterval(topupTimer); $('topupBtn').disabled = false; return; }
+      try {
+        const r = await api('/api/balance/topup/' + payment_id);
+        if (r.status === 'paid') {
+          clearInterval(topupTimer);
+          $('pBalance').textContent = r.balance.toFixed(2) + ' USDT';
+          $('topupStatus').textContent = 'Баланс пополнен ✅';
+          $('topupBtn').disabled = false;
+          toast(`Баланс пополнен: ${r.balance.toFixed(2)} USDT`);
+        } else if (r.status === 'expired') {
+          clearInterval(topupTimer);
+          $('topupStatus').textContent = 'Счёт истёк — создайте новый.';
+          $('topupBtn').disabled = false;
+        }
+      } catch (e) {}
+    }, 5000);
+  } catch (e) {
+    toast(e.message);
+    $('topupBtn').disabled = false;
+  }
+});
+
+// ── создание бота ─────────────────────────────────────────────────────
+let TPLS = [], TPL_SEL = null;
+
+async function loadTemplates() {
+  const {templates, trial_hours} = await api('/api/templates');
+  TPLS = templates;
+  const pick = $('tplPick');
+  pick.innerHTML = '';
+  templates.forEach((t, i) => {
+    const el = document.createElement('span');
+    el.className = 'tpl-opt' + (i === 0 ? ' sel' : '');
+    el.textContent = `${t.title} · ${t.price} USDT/мес`;
+    el.addEventListener('click', () => {
+      pick.querySelectorAll('.tpl-opt').forEach(x => x.classList.remove('sel'));
+      el.classList.add('sel');
+      TPL_SEL = t.code;
+      $('tplSummary').textContent = t.summary;
+    });
+    pick.appendChild(el);
+  });
+  if (templates.length) {
+    TPL_SEL = templates[0].code;
+    $('tplSummary').textContent = templates[0].summary;
+  }
+  $('createHint').textContent = `Первые ${trial_hours} ч — бесплатно`;
+}
+
+$('createToggle').addEventListener('click', () => {
+  $('createCard').classList.toggle('hidden');
+  if (!$('createCard').classList.contains('hidden')) $('tokenInput').focus();
+});
+
+$('createBtn').addEventListener('click', async () => {
+  const token = $('tokenInput').value.trim();
+  if (!token) { toast('Вставьте токен бота от @BotFather'); return; }
+  if (!TPL_SEL) { toast('Выберите шаблон'); return; }
+  $('createBtn').disabled = true;
+  $('createHint').textContent = 'Проверяю токен и запускаю…';
+  try {
+    const b = await api('/api/bots', {
+      method: 'POST',
+      body: JSON.stringify({type: TPL_SEL, token}),
+    });
+    $('tokenInput').value = '';
+    $('createCard').classList.add('hidden');
+    toast(b.warning ? b.warning : `Бот @${b.username} создан и запущен!`);
+    await refreshAll();
+  } catch (e) { toast(e.message); }
+  $('createBtn').disabled = false;
+  $('createHint').textContent = '';
+});
+
+async function loadBots() {
+  const {bots} = await api('/api/bots');
+  const list = $('botList');
+  list.innerHTML = '';
+  bots.forEach(b => list.appendChild(botCard(b)));
+  $('noBots').classList.toggle('hidden', bots.length > 0);
+}
+
+async function loadAdmin() {
+  const s = await api('/api/admin/stats');
+  $('adminStats').innerHTML = [
+    ['Пользователи', s.users],
+    ['Ботов / запущено', `${s.bots_total} / ${s.bots_running}`],
+    ['Доход за 30 дн.', s.revenue_month.toFixed(2) + ' USDT'],
+    ['Доход всего', s.revenue_total.toFixed(2) + ' USDT'],
+  ].map(([l, v]) => `<div class="glass stat"><div class="label">${l}</div><div class="value">${v}</div></div>`).join('');
+
+  const {bots} = await api('/api/admin/bots');
+  const ab = $('adminBots');
+  ab.innerHTML = '';
+  bots.forEach(b => ab.appendChild(botCard(b, true)));
+
+  const {prices, titles} = await api('/api/admin/prices');
+  $('adminPrices').innerHTML = '';
+  Object.entries(prices).forEach(([code, price]) => {
+    const row = document.createElement('div');
+    row.className = 'price-row';
+    row.innerHTML = `
+      <span style="min-width:9rem">${titles[code]}</span>
+      <input type="number" min="0.1" step="0.1" value="${price}">
+      <button class="btn small ghost">Сохранить</button>`;
+    row.querySelector('button').addEventListener('click', async () => {
+      try {
+        await api('/api/admin/prices', {
+          method: 'POST',
+          body: JSON.stringify({type: code, price: parseFloat(row.querySelector('input').value)}),
+        });
+        toast('Цена обновлена');
+      } catch (e) { toast(e.message); }
+    });
+    $('adminPrices').appendChild(row);
+  });
+
+  const {payments} = await api('/api/admin/payments?limit=15');
+  $('adminPayments').innerHTML = payments.length
+    ? payments.map(p => `
+      <div class="rowline">
+        <span class="left">
+          <span>${p.amount.toFixed(2)} ${p.asset === 'BAL' ? 'с баланса' : p.asset}</span>
+          <span class="chip">${p.kind === 'topup' ? 'пополнение' : 'подписка ' + p.months + ' мес'}</span>
+        </span>
+        <span class="muted">${p.owner_tg_id} · ${fmtDate(p.paid_at)}</span>
+      </div>`).join('')
+    : '<div class="rowline muted">платежей пока нет</div>';
+}
+
+async function loadApp() {
+  ME = await api('/api/me');
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('userbox').classList.remove('hidden');
+  $('userName').textContent = ME.name + (ME.username ? ' · @' + ME.username : '');
+  $('pBalance').textContent = ME.balance.toFixed(2) + ' USDT';
+  $('pRef').textContent =
+    `приглашено: ${ME.ref.l1} (+${ME.ref.l2} на 2-м уровне) · заработано ${ME.ref.earned.toFixed(2)} USDT`;
+  $('pRefLink').textContent = ME.ref_link;
+  $('pRefLink').onclick = () => {
+    navigator.clipboard.writeText(ME.ref_link);
+    toast('Реферальная ссылка скопирована');
+  };
+  await Promise.all([loadBots(), loadTemplates()]);
+  $('adminBlock').classList.toggle('hidden', !ME.is_admin);
+  if (ME.is_admin) await loadAdmin();
+}
+
+if (TOKEN) loadApp().catch(() => doLogout());
+</script>
+</body>
+</html>
