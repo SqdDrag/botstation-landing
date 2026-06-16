@@ -184,7 +184,7 @@ nav.desktop a:hover::after{transform:scaleX(1)}
 
 .section-title{
   display:flex;flex-direction:column;align-items:center;gap:.75rem;
-  margin-top:4.5rem;opacity:.95;padding:0 1rem;
+  margin-top:4.5rem;margin-bottom:1.25rem;opacity:.95;padding:0 1rem;
 }
 .section-title span{
   font-weight:500;font-size:1.6rem;letter-spacing:.5px;
@@ -192,10 +192,6 @@ nav.desktop a:hover::after{transform:scaleX(1)}
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 @media(min-width:768px){.section-title span{font-size:2rem}}
-.divider{
-  height:1px;width:100%;max-width:72rem;margin-bottom:1.25rem;border-radius:1rem;
-  background:linear-gradient(to right,transparent,rgba(167,139,250,.5),transparent);
-}
 
 /* появление при скролле */
 .reveal{opacity:0;transform:translateY(48px);filter:blur(6px);
@@ -492,9 +488,7 @@ footer{
 
   <!-- ШАБЛОНЫ -->
   <div class="section-title reveal fade" id="templates">
-    <span>Готовые шаблоны</span>
-    <div class="divider"></div>
-  </div>
+    <span>Готовые шаблоны</span>  </div>
   <div class="templates">
     <div class="glass tpl-card reveal" data-tilt>
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z"/></svg></div>
@@ -523,9 +517,7 @@ footer{
 
   <!-- ТАРИФЫ -->
   <div class="section-title reveal fade" id="price">
-    <span>Выбери свой тариф</span>
-    <div class="divider"></div>
-  </div>
+    <span>Выбери свой тариф</span>  </div>
   <div class="pricing">
     <div class="price-card-wrap tilt-l reveal">
       <div class="glass price-card">
@@ -558,9 +550,7 @@ footer{
 
   <!-- FAQ -->
   <div class="section-title reveal fade">
-    <span>FAQ</span>
-    <div class="divider"></div>
-  </div>
+    <span>FAQ</span>  </div>
   <div class="faq" id="faq">
     <div class="glass faq-inner reveal">
       <div class="faq-item">
