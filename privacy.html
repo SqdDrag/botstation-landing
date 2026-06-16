@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Политика конфиденциальности — BotStation</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://botstation.xyz/privacy.html">
+<style>
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:300;src:url(fonts/FindSansPro-Light.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:400;src:url(fonts/FindSansPro-Regular.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:500;src:url(fonts/FindSansPro-Medium.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:700;src:url(fonts/FindSansPro-Bold.woff2) format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#232142;color:#fff;min-height:100vh;font-family:FindSansPro,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(#54519e,#232142)}
+a{color:inherit;text-decoration:none}
+.page{position:relative;z-index:1;max-width:48rem;margin:0 auto;padding:2rem 1.5rem 5rem}
+.back{display:inline-flex;align-items:center;gap:.5rem;opacity:.7;font-weight:300;margin-bottom:2rem;transition:opacity .2s}
+.back:hover{opacity:1}
+h1{font-weight:700;font-size:2rem;margin-bottom:.5rem}
+.date{font-weight:300;opacity:.6;margin-bottom:2.5rem}
+.glass{border-radius:1.5rem;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);background:linear-gradient(to bottom right,rgba(255,255,255,.03),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.12);padding:2rem 2.5rem;margin-bottom:1.5rem}
+h2{font-weight:500;font-size:1.3rem;margin:2rem 0 1rem;opacity:.9}
+h3{font-weight:500;font-size:1.1rem;margin:1.5rem 0 .5rem;opacity:.85}
+p{font-weight:300;opacity:.85;margin-bottom:1rem}
+ul{font-weight:300;opacity:.85;margin:.5rem 0 1rem 1.5rem}
+li{margin-bottom:.4rem}
+footer{width:100%;padding:2rem 0;margin-top:3rem;text-align:center;font-weight:300;opacity:.4;font-size:.875rem}
+@media(max-width:768px){.glass{padding:1.5rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="index.html">← На главную</a>
+  <h1>Политика конфиденциальности</h1>
+  <div class="date">Дата последнего обновления: 14 июня 2026 г.</div>
+
+  <div class="glass">
+    <h2>1. Общие положения</h2>
+    <p>Настоящая Политика конфиденциальности описывает, как сервис BotStation (далее — «Сервис», «мы») собирает, использует и защищает информацию пользователей при использовании веб-сайта <b>botstation.xyz</b> и платформы конструктора Telegram-ботов.</p>
+    <p>Используя Сервис, вы подтверждаете своё согласие с условиями данной Политики. Если вы не согласны — воздержитесь от использования Сервиса.</p>
+  </div>
+
+  <div class="glass">
+    <h2>2. Какие данные мы собираем</h2>
+
+    <h3>2.1. Данные, предоставляемые вами</h3>
+    <ul>
+      <li><b>Telegram ID и username</b> — идентификатор аккаунта Telegram при входе в панель управления и использовании конструктора ботов.</li>
+      <li><b>Токены Telegram-ботов</b> — API-токены, которые вы предоставляете для подключения ботов к платформе. Токены шифруются алгоритмом Fernet (AES-128-CBC) и хранятся в зашифрованном виде.</li>
+      <li><b>Настройки ботов</b> — тексты, вопросы анкет, тарифы и другие параметры, которые вы задаёте через интерфейс.</li>
+      <li><b>Данные клиентов ваших ботов</b> — сообщения, заявки, заказы, которые обрабатываются вашими подключёнными ботами.</li>
+    </ul>
+
+    <h3>2.2. Данные, собираемые автоматически</h3>
+    <ul>
+      <li><b>IP-адрес</b> — при обращении к API панели управления.</li>
+      <li><b>Логи</b> — серверные логи платформы (уровень INFO) для отладки и мониторинга работоспособности.</li>
+      <li><b>Данные об оплатах</b> — суммы, даты, статусы транзакций (через Crypto Pay).</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>3. Как мы используем данные</h2>
+    <ul>
+      <li>Для работы Сервиса: запуск, настройка и управление вашими Telegram-ботами.</li>
+      <li>Для обработки платежей и управления подписками.</li>
+      <li>Для связи с вами: уведомления о статусе подписки, падении ботов, входе в панель.</li>
+      <li>Для обеспечения безопасности: проверка токенов, защита от несанкционированного доступа.</li>
+      <li>Для улучшения Сервиса: анализ обезличенной статистики использования.</li>
+    </ul>
+    <p>Мы <b>не продаём</b> и <b>не передаём</b> ваши данные третьим лицам, за исключением случаев, описанных в Политике.</p>
+  </div>
+
+  <div class="glass">
+    <h2>4. Хранение и защита данных</h2>
+    <ul>
+      <li>Данные хранятся на сервере платформы в базах данных SQLite.</li>
+      <li>Токены Telegram-ботов зашифрованы (Fernet/AES) и не хранятся в открытом виде.</li>
+      <li>Доступ к данным ограничен: каждый бот видит только свои данные, боты других пользователей недоступны.</li>
+      <li>При удалении бота с платформы запись удаляется из реестра, однако файл базы данных может оставаться на диске для возможности восстановления.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>5. Данные клиентов ваших ботов</h2>
+    <p>Если вы подключаете бота к платформе, данные ваших клиентов (сообщения, заявки, заказы) обрабатываются на сервере Сервиса. Вы выступаете оператором этих данных в соответствии с применимым законодательством.</p>
+    <p>Мы не используем данные клиентов ваших ботов для собственных целей и не передаём их третьим лицам.</p>
+  </div>
+
+  <div class="glass">
+    <h2>6. Платежи</h2>
+    <p>Платежи обрабатываются через сторонний сервис <b>Crypto Pay</b> (@CryptoBot). Мы не храним данные банковских карт или криптокошельков. Сервис Crypto Pay имеет собственную политику конфиденциальности.</p>
+  </div>
+
+  <div class="glass">
+    <h2>7. Cookies и локальное хранилище</h2>
+    <p>Панель управления использует <b>localStorage</b> браузера для хранения сессионного токена авторизации. Токен имеет срок жизни 30 дней и автоматически удаляется при выходе из аккаунта.</p>
+  </div>
+
+  <div class="glass">
+    <h2>8. Ваши права</h2>
+    <ul>
+      <li><b>Доступ:</b> вы можете запросить информацию о хранящихся данных через панель управления или обратившись в поддержку.</li>
+      <li><b>Удаление:</b> вы можете удалить аккаунт и все подключённые боты через панель управления. Данные будут удалены из реестра.</li>
+      <li><b>Экспорт:</b> по запросу мы предоставим данные, связанные с вашим аккаунтом.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>9. Изменения Политики</h2>
+    <p>Мы можем обновлять данную Политику. При существенных изменениях уведомим вас через материнского бота или по электронной почте (если она была предоставлена). Актуальная версия всегда доступна на этой странице.</p>
+  </div>
+
+  <div class="glass">
+    <h2>10. Контакты</h2>
+    <p>По вопросам конфиденциальности обращайтесь: <a href="https://t.me/BotStationRUBot" style="text-decoration:underline">@BotStationRUBot</a></p>
+  </div>
+
+  <footer>© 2026 BotStation</footer>
+</div>
+</body>
+</html>

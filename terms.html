@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пользовательское соглашение — BotStation</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://botstation.xyz/terms.html">
+<style>
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:300;src:url(fonts/FindSansPro-Light.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:400;src:url(fonts/FindSansPro-Regular.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:500;src:url(fonts/FindSansPro-Medium.woff2) format("woff2")}
+@font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:700;src:url(fonts/FindSansPro-Bold.woff2) format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#232142;color:#fff;min-height:100vh;font-family:FindSansPro,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.7;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(#54519e,#232142)}
+a{color:inherit;text-decoration:none}
+.page{position:relative;z-index:1;max-width:48rem;margin:0 auto;padding:2rem 1.5rem 5rem}
+.back{display:inline-flex;align-items:center;gap:.5rem;opacity:.7;font-weight:300;margin-bottom:2rem;transition:opacity .2s}
+.back:hover{opacity:1}
+h1{font-weight:700;font-size:2rem;margin-bottom:.5rem}
+.date{font-weight:300;opacity:.6;margin-bottom:2.5rem}
+.glass{border-radius:1.5rem;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);background:linear-gradient(to bottom right,rgba(255,255,255,.03),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.12);padding:2rem 2.5rem;margin-bottom:1.5rem}
+h2{font-weight:500;font-size:1.3rem;margin:2rem 0 1rem;opacity:.9}
+h3{font-weight:500;font-size:1.1rem;margin:1.5rem 0 .5rem;opacity:.85}
+p{font-weight:300;opacity:.85;margin-bottom:1rem}
+ul,ol{font-weight:300;opacity:.85;margin:.5rem 0 1rem 1.5rem}
+li{margin-bottom:.4rem}
+footer{width:100%;padding:2rem 0;margin-top:3rem;text-align:center;font-weight:300;opacity:.4;font-size:.875rem}
+@media(max-width:768px){.glass{padding:1.5rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="index.html">← На главную</a>
+  <h1>Пользовательское соглашение</h1>
+  <div class="date">Дата последнего обновления: 14 июня 2026 г.</div>
+
+  <div class="glass">
+    <h2>1. Термины</h2>
+    <ul>
+      <li><b>Сервис</b> — платформа BotStation (botstation.xyz), предоставляющая инструменты для создания и хостинга Telegram-ботов по готовым шаблонам.</li>
+      <li><b>Пользователь</b> — физическое лицо, использующее Сервис.</li>
+      <li><b>Бот</b> — Telegram-бот, созданный и запущенный через Сервис.</li>
+      <li><b>Подписка</b> — платная услуга, дающая право на хостинг и поддержку Ботов в течение оплаченного периода.</li>
+      <li><b>Триал</b> — бесплатный пробный период (по умолчанию 12 часов) для нового Бота.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>2. Предмет соглашения</h2>
+    <p>Сервис предоставляет Пользователю доступ к платформе конструктора Telegram-ботов, включая:</p>
+    <ul>
+      <li>Запуск и хостинг Ботов по готовым шаблонам (Магазин, Поддержка, Анкета, Платный канал).</li>
+      <li>Веб-панель управления Ботами.</li>
+      <li>Приём платежей за подписку.</li>
+    </ul>
+    <p>Пользователь самостоятельно создаёт Telegram-ботов через @BotFather и предоставляет их токены для подключения к Сервису.</p>
+  </div>
+
+  <div class="glass">
+    <h2>3. Регистрация и безопасность</h2>
+    <ul>
+      <li>Для использования Сервиса необходим аккаунт Telegram.</li>
+      <li>Токены Telegram-ботов хранятся в зашифрованном виде (Fernet/AES) и используются только для работы Ботов.</li>
+      <li>Пользователь несёт ответственность за сохранность токенов. Отзыв токена у @BotFather лишает Сервис доступа к Боту.</li>
+      <li>Пользователь не должен передавать токены третьим лицам.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>4. Подписка и оплата</h2>
+    <h3>4.1. Триал</h3>
+    <p>Каждый новый Бот получает бесплатный пробный период (по умолчанию 12 часов). По окончании триала Бот останавливается, данные сохраняются.</p>
+
+    <h3>4.2. Подписка</h3>
+    <ul>
+      <li>Подписка оплачивается в USDT через Crypto Pay (@CryptoBot) или с внутреннего баланса.</li>
+      <li>Доступные периоды: 1, 3, 6, 12 месяцев. Скидки: 3 мес — 10%, 6 мес — 20%, 12 мес — 30%.</li>
+      <li>При наличии средств на балансе подписка продлевается автоматически.</li>
+    </ul>
+
+    <h3>4.3. Возврат средств</h3>
+    <p>Возврат средств не предусмотрен. Пользователь может в любой момент отказаться от подписки, но ранее оплаченные периоды не компенсируются.</p>
+
+    <h3>4.4. Баланс</h3>
+    <ul>
+      <li>Баланс пополняется через Crypto Pay в USDT.</li>
+      <li>Средства с баланса списываются за подписку Ботов и начисляются по реферальной программе.</li>
+      <li>Баланс не подлежит возврату в денежном виде.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>5. Реферальная программа</h2>
+    <ul>
+      <li>Приглашая других пользователей по реферальной ссылке, Пользователь получает на баланс: 10% с оплат приглашённых первого уровня, 2% — второго уровня.</li>
+      <li>Начисления производятся с реальных платежей (Crypto Pay), не со списаний с баланса.</li>
+      <li>Сервис оставляет за собой право изменять условия реферальной программы с уведомлением пользователей.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>6. Обязанности и ограничения</h2>
+    <h3>6.1. Пользователь обязуется:</h3>
+    <ul>
+      <li>Использовать Сервис в соответствии с законодательством своей страны.</li>
+      <li>Не использовать Боты для рассылки спама, мошенничества, распространения запрещённого контента.</li>
+      <li>Не пытаться получить несанкционированный доступ к Сервису или данным других пользователей.</li>
+      <li>Не нагружать Сервис чрезмерным количеством запросов (DDoS, абуз API).</li>
+    </ul>
+
+    <h3>6.2. Сервис не несёт ответственности за:</h3>
+    <ul>
+      <li>Временные сбои и недоступность Сервиса.</li>
+      <li>Действия Telegram (блокировка ботов, изменение API).</li>
+      <li>Данные клиентов Ботов — оператором этих данных является Пользователь.</li>
+      <li>Потерю данных при отзыве токена или удалении Бота.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>7. Интеллектуальная собственность</h2>
+    <p>Все права на платформу, шаблоны, код и дизайн принадлежат Сервису. Пользователь получает ограниченную лицензию на использование Сервиса в течение действия подписки.</p>
+  </div>
+
+  <div class="glass">
+    <h2>8. Изменение условий</h2>
+    <p>Сервис оставляет за собой право изменять настоящее соглашение. При существенных изменениях пользователи уведомляются через материнского бота. Продолжение использования Сервиса после изменений означает согласие с новыми условиями.</p>
+  </div>
+
+  <div class="glass">
+    <h2>9. Прекращение использования</h2>
+    <ul>
+      <li>Пользователь может удалить все Боты и отказаться от Сервиса в любой момент.</li>
+      <li>Сервис может приостановить доступ при нарушении условий соглашения.</li>
+      <li>При удалении Бота его запись удаляется из реестра; файл базы данных может сохраняться для возможности восстановления.</li>
+    </ul>
+  </div>
+
+  <div class="glass">
+    <h2>10. Применимое право</h2>
+    <p>Настоящее соглашение регулируется законодательством Российской Федерации. Все споры разрешаются путём переговоров; при недостижении согласия — в суде по месту нахождения Сервиса.</p>
+  </div>
+
+  <div class="glass">
+    <h2>11. Контакты</h2>
+    <p>По вопросам соглашения обращайтесь: <a href="https://t.me/BotStationRUBot" style="text-decoration:underline">@BotStationRUBot</a></p>
+  </div>
+
+  <footer>© 2026 BotStation</footer>
+</div>
+</body>
+</html>
