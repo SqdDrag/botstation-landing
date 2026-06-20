@@ -73,6 +73,8 @@
   ]
 }
 </script>
+<link rel="preload" href="fonts/FindSansPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/FindSansPro-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:300;src:url(fonts/FindSansPro-Light.woff2) format("woff2")}
 @font-face{font-display:swap;font-family:FindSansPro;font-style:normal;font-weight:400;src:url(fonts/FindSansPro-Regular.woff2) format("woff2")}
@@ -178,7 +180,7 @@ nav.desktop a:hover{background:rgba(255,255,255,.06)}
 nav.desktop a:hover::after{transform:scaleX(1)}
 @media(min-width:768px){nav.desktop{display:flex}}
 
-.burger{display:flex;flex-direction:column;gap:.5rem;width:2.5rem;cursor:pointer;z-index:60;padding-top:.25rem}
+.burger{display:flex;flex-direction:column;gap:.5rem;width:2.5rem;cursor:pointer;z-index:60;padding-top:.25rem;background:none;border:0}
 .burger span{height:4px;width:100%;background:#fff;border-radius:1rem;transition:transform .2s,opacity .2s}
 .burger.open span:nth-child(1){transform:translateY(12px) rotate(45deg)}
 .burger.open span:nth-child(2){opacity:0}
@@ -259,6 +261,10 @@ nav.desktop a:hover::after{transform:scaleX(1)}
   transition:opacity .6s ease-out,transform .6s ease-out,filter .6s ease-out}
 .reveal.visible{opacity:1;transform:none;filter:none}
 .reveal.fade{transform:translateY(20px)}
+/* hero виден сразу (без JS), иначе LCP ждёт IntersectionObserver */
+@keyframes heroIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes heroSlide{from{transform:translateY(22px)}to{transform:none}}
+.hero-in{animation:heroIn .6s ease-out both}
 
 /* ---------- hero ---------- */
 .hero{text-align:center;padding:4.5rem 1rem 1.5rem}
@@ -280,7 +286,7 @@ nav.desktop a:hover::after{transform:scaleX(1)}
   background:linear-gradient(100deg,#ffffff,#c9c2ff,#ffffff,#d8b6ff);
   background-size:220% auto;
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:shine 7s linear infinite;
+  animation:shine 7s linear infinite, heroSlide .6s ease-out both;
 }
 @keyframes shine{to{background-position:220% center}}
 .hero p{font-weight:300;font-size:clamp(1.1rem,5vw,1.6rem);color:rgba(255,255,255,.8);margin-top:.5rem}
@@ -425,9 +431,9 @@ footer{
 .footer-brand p{font-weight:300;color:rgba(255,255,255,.7);max-width:24rem}
 .footer-col{display:flex;flex-direction:column;gap:.75rem}
 .footer-col span{color:#fff}
-.footer-col a{font-weight:300;color:rgba(255,255,255,.6);transition:color .2s;display:block;margin-top:.35rem}
+.footer-col a{font-weight:300;color:rgba(255,255,255,.72);transition:color .2s;display:block;margin-top:.35rem}
 .footer-col a:hover{color:#fff}
-.copyright{display:flex;justify-content:center;font-weight:300;opacity:.4;font-size:.875rem;padding-top:2rem}
+.copyright{display:flex;justify-content:center;font-weight:300;opacity:.55;font-size:.875rem;padding-top:2rem}
 
 /* ---------- мобильная версия ---------- */
 @media(max-width:767px){
@@ -459,8 +465,8 @@ footer{
 
 /* доступность: уважаем «меньше движения» */
 @media(prefers-reduced-motion:reduce){
-  .reveal{opacity:1!important;transform:none!important;filter:none!important}
-  .blob,.hero h1,.btn::after,.badge .live,.dot,.scroll-hint svg{animation:none!important}
+  .reveal,.hero-in{opacity:1!important;transform:none!important;filter:none!important}
+  .hero-in,.blob,.hero h1,.btn::after,.badge .live,.dot,.scroll-hint svg{animation:none!important}
   html{scroll-behavior:auto}
 }
 </style>
@@ -482,7 +488,7 @@ footer{
       <a href="#price">Тарифы</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+    <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
   </header>
   <div class="mobile-menu" id="mobileMenu">
     <a href="#">Главная</a>
@@ -493,11 +499,11 @@ footer{
 
   <!-- HERO -->
   <div class="hero">
-    <div class="reveal fade"><span class="badge"><span class="live"></span> Без&nbsp;кода · хостинг&nbsp;включён · триал&nbsp;12&nbsp;ч</span></div>
-    <h1 class="reveal fade" data-delay="80">Конструктор ботов</h1>
-    <p class="reveal fade" data-delay="160">свой Telegram-бот за пару минут</p>
+    <div class="hero-in"><span class="badge"><span class="live"></span> Без&nbsp;кода · хостинг&nbsp;включён · триал&nbsp;12&nbsp;ч</span></div>
+    <h1>Конструктор ботов</h1>
+    <p class="hero-in" style="animation-delay:.12s">свой Telegram-бот за пару минут</p>
   </div>
-  <div class="hero-cta reveal fade" data-delay="240">
+  <div class="hero-cta hero-in" style="animation-delay:.2s">
     <a class="btn" href="https://t.me/BotStationRUBot" rel="noopener noreferrer">
       <span>Создать бота!</span>
     </a>
@@ -701,12 +707,14 @@ document.querySelectorAll('.faq-item').forEach(item => {
 const burger = document.getElementById('burger');
 const menu = document.getElementById('mobileMenu');
 burger.addEventListener('click', () => {
-  menu.classList.toggle('open');
+  const open = menu.classList.toggle('open');
   burger.classList.toggle('open');
+  burger.setAttribute('aria-expanded', open);
 });
 menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   menu.classList.remove('open');
   burger.classList.remove('open');
+  burger.setAttribute('aria-expanded', 'false');
 }));
 
 // появление при скролле (со ступенчатой задержкой)
