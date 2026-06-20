@@ -2,4 +2,18 @@ User-agent: *
 Allow: /
 Disallow: /panel/
 
+# AI-агенты и LLM-краулеры — доступ к сайту разрешён
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /panel/
+
 Sitemap: https://botstation.xyz/sitemap.xml
