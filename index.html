@@ -16,6 +16,19 @@
 <meta property="og:url" content="https://botstation.xyz/">
 <meta property="og:locale" content="ru_RU">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='18'%20fill='%23161826'/%3E%3Ctext%20x='50'%20y='68'%20font-size='58'%20text-anchor='middle'%20fill='%239184d9'%20font-family='Georgia,serif'%20font-style='italic'%20font-weight='600'%3ED%3C/text%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Сколько стоит Telegram-бот?", "acceptedAnswer": {"@type": "Answer", "text": "Простой бот — 10–35 тыс. ₽, дальше зависит от задач. План, цену и срок считаем под конкретную задачу за один диалог."}},
+    {"@type": "Question", "name": "Как быстро запустимся?", "acceptedAnswer": {"@type": "Answer", "text": "Простой бот выходит в релиз за 3–5 дней от первого сообщения. Сложные проекты оцениваем в начале и держим срок."}},
+    {"@type": "Question", "name": "Где будет жить бот?", "acceptedAnswer": {"@type": "Answer", "text": "На наших серверах: хостинг, мониторинг и обновления входят в подписку на поддержку."}},
+    {"@type": "Question", "name": "Что будет после запуска?", "acceptedAnswer": {"@type": "Answer", "text": "Следим за ботом 24/7, чиним и развиваем по мере роста проекта."}},
+    {"@type": "Question", "name": "Нужно ли писать ТЗ?", "acceptedAnswer": {"@type": "Answer", "text": "Нет. Опишите задачу своими словами в Telegram — структуру и план соберёт студия."}}
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@400;500;600&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
@@ -80,6 +93,27 @@ a:hover { color: var(--color-accent-300); }
 .nav a { color: inherit; text-decoration: none; font-size: 14px; }
 .nav a:hover { color: var(--color-accent); }
 
+.svc {
+  display: flex; flex-direction: column; gap: 12px; padding: 24px;
+  border: 1px solid var(--color-divider); border-radius: 14px;
+  transition: border-color .3s ease;
+}
+.svc:hover { border-color: color-mix(in srgb, var(--color-accent) 45%, transparent); }
+.svc h3 { margin: 0; font-family: var(--font-heading); font-weight: 500; font-size: 19px; line-height: 1.25; }
+.svc p { margin: 0; font-size: 14px; line-height: 1.6; color: color-mix(in srgb, var(--color-text) 72%, transparent); flex: 1; }
+.svc .tag { align-self: flex-start; }
+
+.faq { border-bottom: 1px solid var(--color-divider); max-width: 780px; }
+.faq summary {
+  cursor: pointer; list-style: none; display: flex; justify-content: space-between;
+  align-items: center; gap: 16px; padding: 18px 0;
+  font-family: var(--font-heading); font-weight: 500; font-size: 17px;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; font-size: 22px; line-height: 1; color: var(--color-accent); transition: transform .3s ease; flex: none; }
+.faq[open] summary::after { transform: rotate(45deg); }
+.faq p { margin: 0; padding: 0 0 18px; font-size: 15px; line-height: 1.6; color: color-mix(in srgb, var(--color-text) 75%, transparent); max-width: 60ch; }
+
 @keyframes dsMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes dsRise{from{transform:translateY(112%)}to{transform:translateY(0)}}
 @keyframes dsFadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
@@ -99,8 +133,10 @@ a:hover { color: var(--color-accent-300); }
 
   <nav class="nav" style="padding: 22px clamp(24px, 5vw, 72px); animation: dsFadeUp .7s cubic-bezier(.19,.8,.22,1) .05s both;">
     <span class="nav-brand" style="font-family: 'Unbounded', var(--font-heading); font-size: 14px; font-weight: 500; letter-spacing: 0.02em;">Deside Studio</span>
+    <a href="#services">Услуги</a>
     <a href="#cases">Кейсы</a>
     <a href="#process">Процесс</a>
+    <a href="#faq">FAQ</a>
     <a href="https://t.me/wqw123a" target="_blank" rel="noopener" class="btn btn-primary">Написать в Telegram</a>
   </nav>
 
@@ -154,7 +190,36 @@ a:hover { color: var(--color-accent-300); }
     </div>
   </section>
 
-  <section id="cases" style="padding: clamp(56px, 8vw, 96px) clamp(24px, 5vw, 72px) 64px; max-width: 1440px; margin: 0 auto; box-sizing: border-box;">
+  <section id="services" style="padding: clamp(56px, 7vw, 80px) clamp(24px, 5vw, 72px) clamp(48px, 6vw, 64px); max-width: 1440px; margin: 0 auto; box-sizing: border-box;">
+    <div data-rvl="0" style="display: flex; align-items: center; gap: 16px; margin-bottom: 44px;">
+      <span data-rvl-fx="grow" data-rvl="150" style="width: 44px; height: 1px; background: var(--color-accent);"></span>
+      <span style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent);">Что делаем</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+      <div class="svc" data-rvl="0">
+        <h3>Боты под ключ</h3>
+        <p>Магазины, записи, заявки, платные подписки и закрытые каналы — с оплатой, рассылками и админкой.</p>
+        <span class="tag tag-accent">10–35 тыс. ₽ · 3–5 дней</span>
+      </div>
+      <div class="svc" data-rvl="110">
+        <h3>ИИ-агенты</h3>
+        <p>Бот отвечает как живой менеджер: консультации, поддержка, квалификация заявок — на базе GPT.</p>
+        <span class="tag tag-outline">Под задачу</span>
+      </div>
+      <div class="svc" data-rvl="220">
+        <h3>Mini Apps</h3>
+        <p>Полноценные веб-приложения внутри Telegram: каталоги, личные кабинеты, дашборды.</p>
+        <span class="tag tag-outline">Под задачу</span>
+      </div>
+      <div class="svc" data-rvl="330">
+        <h3>Поддержка и развитие</h3>
+        <p>Хостинг на наших серверах, мониторинг 24/7, правки и новые фичи после запуска.</p>
+        <span class="tag tag-outline">По подписке</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="cases" style="padding: clamp(40px, 5vw, 56px) clamp(24px, 5vw, 72px) 64px; max-width: 1440px; margin: 0 auto; box-sizing: border-box;">
     <div data-rvl="0" style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
       <span data-rvl-fx="grow" data-rvl="150" style="width: 44px; height: 1px; background: var(--color-accent);"></span>
       <span style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent);">Кейсы. Без воды</span>
@@ -219,6 +284,35 @@ a:hover { color: var(--color-accent-300); }
         <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: color-mix(in srgb, var(--color-text) 72%, transparent);">Релиз, мониторинг, развитие. Бот не остаётся сиротой.</p>
       </div>
     </div>
+  </section>
+
+  <div data-rvl-fx="grow" data-rvl="0" style="height: 1px; margin: 0 clamp(24px, 5vw, 72px); background: linear-gradient(to right, transparent, var(--color-divider) 48px calc(100% - 48px), transparent);"></div>
+
+  <section id="faq" style="padding: clamp(48px, 6vw, 72px) clamp(24px, 5vw, 72px) clamp(48px, 6vw, 72px); max-width: 1440px; margin: 0 auto; box-sizing: border-box;">
+    <div data-rvl="0" style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+      <span data-rvl-fx="grow" data-rvl="150" style="width: 44px; height: 1px; background: var(--color-accent);"></span>
+      <span style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent);">Вопросы, которые задают до диалога</span>
+    </div>
+    <details class="faq" data-rvl="0">
+      <summary>Сколько стоит бот?</summary>
+      <p>Простой бот — 10–35 тыс. ₽, дальше зависит от задач. Никакого прайса «от потолка»: описываете задачу — получаете план, цену и срок за один диалог.</p>
+    </details>
+    <details class="faq" data-rvl="80">
+      <summary>Как быстро запустимся?</summary>
+      <p>Простой бот выходит в релиз за 3–5 дней от первого сообщения. Сложные проекты оцениваем в начале — и держим срок.</p>
+    </details>
+    <details class="faq" data-rvl="160">
+      <summary>Где будет жить бот?</summary>
+      <p>На наших серверах: хостинг, мониторинг и обновления входят в подписку на поддержку. Про серверы можно не думать вообще.</p>
+    </details>
+    <details class="faq" data-rvl="240">
+      <summary>Что будет после запуска?</summary>
+      <p>Бот не остаётся сиротой: следим за ним 24/7, чиним раньше, чем заметят пользователи, и развиваем по мере роста.</p>
+    </details>
+    <details class="faq" data-rvl="320">
+      <summary>Нужно ли писать ТЗ?</summary>
+      <p>Нет. Напишите своими словами, что должен делать бот, — структуру и план соберём мы.</p>
+    </details>
   </section>
 
   <section style="position: relative; padding: clamp(56px, 8vw, 96px) clamp(24px, 5vw, 72px) clamp(56px, 7vw, 88px); background: radial-gradient(900px 500px at 50% 130%, color-mix(in srgb, var(--color-accent-900) 80%, transparent), transparent 65%);">
