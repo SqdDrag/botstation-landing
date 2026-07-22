@@ -97,6 +97,8 @@
     var trailDirtyBounds = null;
     var lastFrameTime = 0;
     var cursorSurfaceElement = null;
+    var cursorUsesScrollHeading = false;
+    var lastScrollPosition = window.scrollY;
     var interactiveSelector = 'a, button, summary, input, textarea, select, label, [role="button"]';
 
     function resizeCursorTrail() {
@@ -163,6 +165,25 @@
     function invalidateCursorSurface() {
       cursorSurfaceElement = null;
       if (cursorVisible) scheduleCursorFrame();
+    }
+
+    function updateCursorForScroll() {
+      var nextScrollPosition = window.scrollY;
+      var scrollDelta = nextScrollPosition - lastScrollPosition;
+      lastScrollPosition = nextScrollPosition;
+      invalidateCursorSurface();
+
+      if (!cursorVisible || Math.abs(scrollDelta) < .1) return;
+
+      cursorUsesScrollHeading = true;
+      cursorVelocityX = 0;
+      cursorVelocityY = 0;
+
+      var desiredAngle = scrollDelta > 0 ? 125 : -55;
+      var angleDelta = ((desiredAngle - cursorTargetAngle + 540) % 360) - 180;
+      if (Math.abs(angleDelta + 180) < .001) angleDelta = scrollDelta > 0 ? 180 : -180;
+      cursorTargetAngle += angleDelta;
+      scheduleCursorFrame();
     }
 
     function clearCursorTrail() {
@@ -319,7 +340,10 @@
 
       emitCursorParticles(previousX, previousY, cursorX, cursorY);
 
-      if (cursorVelocityX * cursorVelocityX + cursorVelocityY * cursorVelocityY > .001) {
+      if (
+        !cursorUsesScrollHeading &&
+        cursorVelocityX * cursorVelocityX + cursorVelocityY * cursorVelocityY > .001
+      ) {
         var desiredAngle = Math.atan2(cursorVelocityY, cursorVelocityX) * 180 / Math.PI + 35;
         var headingDelta = ((desiredAngle - cursorTargetAngle + 540) % 360) - 180;
         cursorTargetAngle += headingDelta * headingFollow;
@@ -364,6 +388,7 @@
       cursorInitialized = false;
       cursorVelocityX = 0;
       cursorVelocityY = 0;
+      cursorUsesScrollHeading = false;
       lastFrameTime = 0;
 
       if (cursorFrame) {
@@ -395,6 +420,7 @@
     window.addEventListener('pointermove', function (event) {
       if (event.pointerType === 'touch') return;
 
+      cursorUsesScrollHeading = false;
       var nextX = event.clientX;
       var nextY = event.clientY;
 
@@ -428,7 +454,7 @@
     window.addEventListener('pointercancel', hideCursor, { passive: true });
     window.addEventListener('blur', hideCursor);
     document.addEventListener('mouseleave', hideCursor);
-    window.addEventListener('scroll', invalidateCursorSurface, { passive: true });
+    window.addEventListener('scroll', updateCursorForScroll, { passive: true });
     window.addEventListener('resize', resizeCursorTrail, { passive: true });
     reduceMotionQuery.addEventListener('change', updateReducedMotion);
     resizeCursorTrail();
