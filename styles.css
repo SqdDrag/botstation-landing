@@ -1617,15 +1617,25 @@ img {
   }
 }
 
+.telegram-cursor-trail,
 .telegram-cursor {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9999;
   display: none;
+  pointer-events: none;
+}
+
+.telegram-cursor-trail {
+  z-index: 9998;
+  width: 100vw;
+  height: 100vh;
+}
+
+.telegram-cursor {
+  z-index: 9999;
   width: 0;
   height: 0;
-  pointer-events: none;
   opacity: 0;
   transform: translate3d(-80px, -80px, 0);
   will-change: transform, opacity;
@@ -1638,7 +1648,7 @@ img {
   display: block;
   width: 38px;
   height: 38px;
-  background: var(--blue);
+  background: var(--ink);
   filter:
     drop-shadow(0 0 2px rgba(255, 255, 255, .95))
     drop-shadow(0 7px 12px rgba(16, 17, 15, .3));
@@ -1662,6 +1672,7 @@ img {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .telegram-cursor-trail,
   .telegram-cursor {
     display: block;
   }
@@ -1673,6 +1684,10 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .telegram-cursor-trail {
+    display: none;
+  }
+
   .telegram-cursor,
   .telegram-cursor-plane {
     transition: none;

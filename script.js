@@ -4,8 +4,10 @@
   var header = document.querySelector('.site-header');
   var year = document.querySelector('[data-year]');
   var revealItems = document.querySelectorAll('[data-reveal]');
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var reduceMotion = reduceMotionQuery.matches;
   var telegramCursor = document.querySelector('[data-telegram-cursor]');
+  var telegramCursorTrail = document.querySelector('[data-telegram-cursor-trail]');
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   if (year) year.textContent = String(new Date().getFullYear());
@@ -60,20 +62,164 @@
     var cursorFrame = 0;
     var cursorVisible = false;
     var cursorInitialized = false;
+    var trailContext = telegramCursorTrail ? telegramCursorTrail.getContext('2d') : null;
+    var cursorParticles = [];
+    var particleDistance = 0;
+    var trailPixelRatio = 1;
+    var trailDirtyBounds = null;
+    var lastFrameTime = 0;
     var interactiveSelector = 'a, button, summary, input, textarea, select, label, [role="button"]';
+
+    function resizeCursorTrail() {
+      if (!trailContext) return;
+
+      trailPixelRatio = 1;
+      telegramCursorTrail.width = Math.max(1, Math.round(window.innerWidth * trailPixelRatio));
+      telegramCursorTrail.height = Math.max(1, Math.round(window.innerHeight * trailPixelRatio));
+      trailContext.setTransform(trailPixelRatio, 0, 0, trailPixelRatio, 0, 0);
+      trailDirtyBounds = null;
+    }
+
+    function clearCursorTrail() {
+      if (!trailContext || !trailDirtyBounds) return;
+
+      var padding = 5;
+      trailContext.clearRect(
+        trailDirtyBounds.left - padding,
+        trailDirtyBounds.top - padding,
+        trailDirtyBounds.right - trailDirtyBounds.left + padding * 2,
+        trailDirtyBounds.bottom - trailDirtyBounds.top + padding * 2
+      );
+      trailDirtyBounds = null;
+    }
+
+    function includeCursorTrailPoint(x, y, radius) {
+      if (!trailDirtyBounds) {
+        trailDirtyBounds = {
+          left: x - radius,
+          top: y - radius,
+          right: x + radius,
+          bottom: y + radius
+        };
+        return;
+      }
+
+      trailDirtyBounds.left = Math.min(trailDirtyBounds.left, x - radius);
+      trailDirtyBounds.top = Math.min(trailDirtyBounds.top, y - radius);
+      trailDirtyBounds.right = Math.max(trailDirtyBounds.right, x + radius);
+      trailDirtyBounds.bottom = Math.max(trailDirtyBounds.bottom, y + radius);
+    }
+
+    function addCursorParticle(x, y, directionX, directionY) {
+      var sideX = -directionY;
+      var sideY = directionX;
+      var sideOffset = (Math.random() - .5) * 7;
+      var backwardSpeed = .35 + Math.random() * .55;
+      var sideSpeed = (Math.random() - .5) * .38;
+      var colorRoll = Math.random();
+
+      cursorParticles.push({
+        x: x - directionX * 15 + sideX * sideOffset,
+        y: y - directionY * 15 + sideY * sideOffset,
+        velocityX: -directionX * backwardSpeed + sideX * sideSpeed,
+        velocityY: -directionY * backwardSpeed + sideY * sideSpeed,
+        size: 1 + Math.random() * 2.2,
+        life: 1,
+        fade: .026 + Math.random() * .018,
+        color: colorRoll < .58 ? '47, 91, 255' : (colorRoll < .82 ? '16, 17, 15' : '201, 255, 69')
+      });
+
+      if (cursorParticles.length > 90) cursorParticles.shift();
+    }
+
+    function emitCursorParticles(previousX, previousY, nextX, nextY) {
+      if (!trailContext || reduceMotion || !cursorVisible) return;
+
+      var deltaX = nextX - previousX;
+      var deltaY = nextY - previousY;
+      var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+      if (distance < .1) return;
+
+      particleDistance += distance;
+      var particleCount = Math.min(10, Math.floor(particleDistance / 7));
+
+      if (!particleCount) return;
+
+      particleDistance %= 7;
+      var directionX = deltaX / distance;
+      var directionY = deltaY / distance;
+
+      for (var index = 0; index < particleCount; index += 1) {
+        var progress = (index + 1) / (particleCount + 1);
+        addCursorParticle(
+          previousX + deltaX * progress,
+          previousY + deltaY * progress,
+          directionX,
+          directionY
+        );
+      }
+    }
+
+    function renderCursorParticles(frameScale) {
+      if (!trailContext) return;
+
+      clearCursorTrail();
+
+      for (var index = cursorParticles.length - 1; index >= 0; index -= 1) {
+        var particle = cursorParticles[index];
+
+        particle.x += particle.velocityX * frameScale;
+        particle.y += particle.velocityY * frameScale;
+        particle.velocityX *= Math.pow(.97, frameScale);
+        particle.velocityY *= Math.pow(.97, frameScale);
+        particle.life -= particle.fade * frameScale;
+
+        if (particle.life <= 0) {
+          cursorParticles.splice(index, 1);
+          continue;
+        }
+
+        var particleRadius = particle.size * (.55 + particle.life * .45);
+
+        trailContext.globalAlpha = Math.min(1, particle.life * 1.15);
+        trailContext.fillStyle = 'rgb(' + particle.color + ')';
+        trailContext.beginPath();
+        trailContext.arc(
+          particle.x,
+          particle.y,
+          particleRadius,
+          0,
+          Math.PI * 2
+        );
+        trailContext.fill();
+        includeCursorTrailPoint(particle.x, particle.y, particleRadius);
+      }
+
+      trailContext.globalAlpha = 1;
+    }
 
     function scheduleCursorFrame() {
       if (cursorFrame) return;
       cursorFrame = window.requestAnimationFrame(renderCursor);
     }
 
-    function renderCursor() {
+    function frameAdjustedFollow(baseFollow, frameScale) {
+      return 1 - Math.pow(1 - baseFollow, frameScale);
+    }
+
+    function renderCursor(timestamp) {
       cursorFrame = 0;
 
-      var follow = reduceMotion ? 1 : .18;
-      var velocityFollow = reduceMotion ? 1 : .14;
-      var headingFollow = reduceMotion ? 1 : .2;
-      var angleFollow = reduceMotion ? 1 : .14;
+      var currentTime = typeof timestamp === 'number' ? timestamp : window.performance.now();
+      var frameDuration = lastFrameTime ? Math.min(34, Math.max(4, currentTime - lastFrameTime)) : 16.667;
+      var frameScale = frameDuration / 16.667;
+      lastFrameTime = currentTime;
+
+      var follow = reduceMotion ? 1 : frameAdjustedFollow(.18, frameScale);
+      var velocityFollow = reduceMotion ? 1 : frameAdjustedFollow(.14, frameScale);
+      var headingFollow = reduceMotion ? 1 : frameAdjustedFollow(.2, frameScale);
+      var angleFollow = reduceMotion ? 1 : frameAdjustedFollow(.14, frameScale);
       var previousX = cursorX;
       var previousY = cursorY;
 
@@ -85,6 +231,8 @@
 
       cursorVelocityX += (frameVelocityX - cursorVelocityX) * velocityFollow;
       cursorVelocityY += (frameVelocityY - cursorVelocityY) * velocityFollow;
+
+      emitCursorParticles(previousX, previousY, cursorX, cursorY);
 
       if (cursorVelocityX * cursorVelocityX + cursorVelocityY * cursorVelocityY > .001) {
         var desiredAngle = Math.atan2(cursorVelocityY, cursorVelocityX) * 180 / Math.PI + 35;
@@ -98,6 +246,8 @@
         'translate3d(' + cursorX.toFixed(2) + 'px, ' + cursorY.toFixed(2) + 'px, 0) ' +
         'rotate(' + cursorAngle.toFixed(2) + 'deg)';
 
+      renderCursorParticles(frameScale);
+
       if (
         cursorVisible &&
         !reduceMotion &&
@@ -105,7 +255,8 @@
           Math.abs(cursorTargetY - cursorY) > .1 ||
           Math.abs(cursorTargetAngle - cursorAngle) > .1 ||
           Math.abs(cursorVelocityX) > .01 ||
-          Math.abs(cursorVelocityY) > .01)
+          Math.abs(cursorVelocityY) > .01 ||
+          cursorParticles.length > 0)
       ) {
         scheduleCursorFrame();
       }
@@ -127,8 +278,31 @@
       cursorInitialized = false;
       cursorVelocityX = 0;
       cursorVelocityY = 0;
+      lastFrameTime = 0;
+
+      if (cursorFrame) {
+        window.cancelAnimationFrame(cursorFrame);
+        cursorFrame = 0;
+      }
+
+      cursorParticles.length = 0;
+      particleDistance = 0;
+      clearCursorTrail();
       document.documentElement.classList.remove('telegram-cursor-active');
       telegramCursor.classList.remove('is-visible', 'is-interactive', 'is-pressed');
+    }
+
+    function updateReducedMotion(event) {
+      reduceMotion = event.matches;
+
+      if (reduceMotion) {
+        cursorParticles.length = 0;
+        particleDistance = 0;
+        clearCursorTrail();
+      }
+
+      lastFrameTime = 0;
+      if (cursorVisible) scheduleCursorFrame();
     }
 
     window.addEventListener('pointermove', function (event) {
@@ -166,5 +340,8 @@
     window.addEventListener('pointercancel', hideCursor, { passive: true });
     window.addEventListener('blur', hideCursor);
     document.addEventListener('mouseleave', hideCursor);
+    window.addEventListener('resize', resizeCursorTrail, { passive: true });
+    reduceMotionQuery.addEventListener('change', updateReducedMotion);
+    resizeCursorTrail();
   }
 })();
