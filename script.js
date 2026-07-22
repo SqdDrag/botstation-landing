@@ -20,6 +20,14 @@
   updateHeader();
   window.addEventListener('scroll', updateHeader, { passive: true });
 
+  document.addEventListener('selectstart', function (event) {
+    event.preventDefault();
+  });
+
+  document.addEventListener('dragstart', function (event) {
+    event.preventDefault();
+  });
+
   if (reduceMotion || !('IntersectionObserver' in window)) {
     revealItems.forEach(function (item) {
       item.classList.add('is-visible');
