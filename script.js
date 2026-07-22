@@ -55,6 +55,8 @@
     var cursorTargetY = -80;
     var cursorAngle = 0;
     var cursorTargetAngle = 0;
+    var cursorVelocityX = 0;
+    var cursorVelocityY = 0;
     var cursorFrame = 0;
     var cursorVisible = false;
     var cursorInitialized = false;
@@ -69,10 +71,27 @@
       cursorFrame = 0;
 
       var follow = reduceMotion ? 1 : .18;
-      var angleFollow = reduceMotion ? 1 : .16;
+      var velocityFollow = reduceMotion ? 1 : .14;
+      var headingFollow = reduceMotion ? 1 : .2;
+      var angleFollow = reduceMotion ? 1 : .14;
+      var previousX = cursorX;
+      var previousY = cursorY;
 
       cursorX += (cursorTargetX - cursorX) * follow;
       cursorY += (cursorTargetY - cursorY) * follow;
+
+      var frameVelocityX = cursorX - previousX;
+      var frameVelocityY = cursorY - previousY;
+
+      cursorVelocityX += (frameVelocityX - cursorVelocityX) * velocityFollow;
+      cursorVelocityY += (frameVelocityY - cursorVelocityY) * velocityFollow;
+
+      if (cursorVelocityX * cursorVelocityX + cursorVelocityY * cursorVelocityY > .001) {
+        var desiredAngle = Math.atan2(cursorVelocityY, cursorVelocityX) * 180 / Math.PI + 35;
+        var headingDelta = ((desiredAngle - cursorTargetAngle + 540) % 360) - 180;
+        cursorTargetAngle += headingDelta * headingFollow;
+      }
+
       cursorAngle += (cursorTargetAngle - cursorAngle) * angleFollow;
 
       telegramCursor.style.transform =
@@ -84,7 +103,9 @@
         !reduceMotion &&
         (Math.abs(cursorTargetX - cursorX) > .1 ||
           Math.abs(cursorTargetY - cursorY) > .1 ||
-          Math.abs(cursorTargetAngle - cursorAngle) > .1)
+          Math.abs(cursorTargetAngle - cursorAngle) > .1 ||
+          Math.abs(cursorVelocityX) > .01 ||
+          Math.abs(cursorVelocityY) > .01)
       ) {
         scheduleCursorFrame();
       }
@@ -103,6 +124,9 @@
 
     function hideCursor() {
       cursorVisible = false;
+      cursorInitialized = false;
+      cursorVelocityX = 0;
+      cursorVelocityY = 0;
       document.documentElement.classList.remove('telegram-cursor-active');
       telegramCursor.classList.remove('is-visible', 'is-interactive', 'is-pressed');
     }
@@ -119,27 +143,15 @@
         cursorTargetX = nextX;
         cursorTargetY = nextY;
         cursorInitialized = true;
+        renderCursor();
       } else {
-        var deltaX = nextX - cursorTargetX;
-        var deltaY = nextY - cursorTargetY;
-
-        if (!reduceMotion && deltaX * deltaX + deltaY * deltaY > 4) {
-          var desiredAngle = Math.atan2(deltaY, deltaX) * 180 / Math.PI + 35;
-          var angleDelta = ((desiredAngle - cursorTargetAngle + 540) % 360) - 180;
-          cursorTargetAngle += angleDelta;
-        }
-
         cursorTargetX = nextX;
         cursorTargetY = nextY;
+        scheduleCursorFrame();
       }
 
       updateInteractiveState(event.target);
       showCursor();
-      if (cursorFrame) {
-        window.cancelAnimationFrame(cursorFrame);
-        cursorFrame = 0;
-      }
-      renderCursor();
     }, { passive: true });
 
     window.addEventListener('pointerdown', function () {
