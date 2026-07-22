@@ -68,6 +68,7 @@
     var trailPixelRatio = 1;
     var trailDirtyBounds = null;
     var lastFrameTime = 0;
+    var cursorSurfaceElement = null;
     var interactiveSelector = 'a, button, summary, input, textarea, select, label, [role="button"]';
 
     function resizeCursorTrail() {
@@ -78,6 +79,62 @@
       telegramCursorTrail.height = Math.max(1, Math.round(window.innerHeight * trailPixelRatio));
       trailContext.setTransform(trailPixelRatio, 0, 0, trailPixelRatio, 0, 0);
       trailDirtyBounds = null;
+      cursorSurfaceElement = null;
+      if (cursorVisible) scheduleCursorFrame();
+    }
+
+    function colorChannelToLinear(channel) {
+      var normalized = channel / 255;
+      return normalized <= .04045
+        ? normalized / 12.92
+        : Math.pow((normalized + .055) / 1.055, 2.4);
+    }
+
+    function isDarkSurface(element) {
+      var currentElement = element;
+
+      while (currentElement instanceof Element) {
+        if (currentElement !== telegramCursor && currentElement !== telegramCursorTrail) {
+          var backgroundColor = window.getComputedStyle(currentElement).backgroundColor;
+          var channels = backgroundColor.match(/[\d.]+/g);
+
+          if (channels && channels.length >= 3) {
+            var alpha = channels.length > 3 ? Number(channels[3]) : 1;
+
+            if (alpha >= .45) {
+              var luminance =
+                .2126 * colorChannelToLinear(Number(channels[0])) +
+                .7152 * colorChannelToLinear(Number(channels[1])) +
+                .0722 * colorChannelToLinear(Number(channels[2]));
+
+              return luminance < .08;
+            }
+          }
+        }
+
+        currentElement = currentElement.parentElement;
+      }
+
+      return false;
+    }
+
+    function updateCursorSurface() {
+      if (!cursorVisible) return;
+
+      var sampledElement = document.elementFromPoint(
+        Math.max(0, Math.min(window.innerWidth - 1, cursorX)),
+        Math.max(0, Math.min(window.innerHeight - 1, cursorY))
+      );
+
+      if (sampledElement === cursorSurfaceElement) return;
+
+      cursorSurfaceElement = sampledElement;
+      telegramCursor.classList.toggle('is-on-dark', isDarkSurface(sampledElement));
+    }
+
+    function invalidateCursorSurface() {
+      cursorSurfaceElement = null;
+      if (cursorVisible) scheduleCursorFrame();
     }
 
     function clearCursorTrail() {
@@ -246,6 +303,7 @@
         'translate3d(' + cursorX.toFixed(2) + 'px, ' + cursorY.toFixed(2) + 'px, 0) ' +
         'rotate(' + cursorAngle.toFixed(2) + 'deg)';
 
+      updateCursorSurface();
       renderCursorParticles(frameScale);
 
       if (
@@ -287,9 +345,10 @@
 
       cursorParticles.length = 0;
       particleDistance = 0;
+      cursorSurfaceElement = null;
       clearCursorTrail();
       document.documentElement.classList.remove('telegram-cursor-active');
-      telegramCursor.classList.remove('is-visible', 'is-interactive', 'is-pressed');
+      telegramCursor.classList.remove('is-visible', 'is-interactive', 'is-pressed', 'is-on-dark');
     }
 
     function updateReducedMotion(event) {
@@ -326,6 +385,7 @@
 
       updateInteractiveState(event.target);
       showCursor();
+      updateCursorSurface();
     }, { passive: true });
 
     window.addEventListener('pointerdown', function () {
@@ -340,6 +400,7 @@
     window.addEventListener('pointercancel', hideCursor, { passive: true });
     window.addEventListener('blur', hideCursor);
     document.addEventListener('mouseleave', hideCursor);
+    window.addEventListener('scroll', invalidateCursorSurface, { passive: true });
     window.addEventListener('resize', resizeCursorTrail, { passive: true });
     reduceMotionQuery.addEventListener('change', updateReducedMotion);
     resizeCursorTrail();
