@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260722-10">
+  <link rel="stylesheet" href="styles.css?v=20260722-11">
   <script>document.documentElement.classList.add('js');</script>
   <script type="application/ld+json">
   {
@@ -381,30 +381,60 @@
         </div>
 
         <div class="faq-list" data-reveal="right">
-          <details class="faq-item">
-            <summary>Сколько стоит разработка?</summary>
-            <p>Стоимость зависит от сценариев, интерфейса и интеграций. После уточнения задачи фиксируем состав работ, реалистичный срок и ориентир по бюджету.</p>
-          </details>
+          <div class="faq-item">
+            <button class="faq-trigger" type="button" id="faq-trigger-cost" aria-expanded="true" aria-controls="faq-answer-cost">
+              <span>Сколько стоит разработка?</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-cost" role="region" aria-labelledby="faq-trigger-cost">
+              <div class="faq-answer-inner">
+                <p>Стоимость зависит от сценариев, интерфейса и интеграций. После уточнения задачи фиксируем состав работ, реалистичный срок и ориентир по бюджету.</p>
+              </div>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary>Нужно ли готовить ТЗ?</summary>
-            <p>Нет. Опишите своими словами, кто будет пользоваться продуктом и что он должен делать. Сценарии и структуру решения соберём мы.</p>
-          </details>
+          <div class="faq-item">
+            <button class="faq-trigger" type="button" id="faq-trigger-brief" aria-expanded="true" aria-controls="faq-answer-brief">
+              <span>Нужно ли готовить ТЗ?</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-brief" role="region" aria-labelledby="faq-trigger-brief">
+              <div class="faq-answer-inner">
+                <p>Нет. Опишите своими словами, кто будет пользоваться продуктом и что он должен делать. Сценарии и структуру решения соберём мы.</p>
+              </div>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary>Можно подключить оплаты и CRM?</summary>
-            <p>Да. Подключаем платёжные системы, CRM, базы данных, админ-панели и другие сервисы по API.</p>
-          </details>
+          <div class="faq-item">
+            <button class="faq-trigger" type="button" id="faq-trigger-integrations" aria-expanded="true" aria-controls="faq-answer-integrations">
+              <span>Можно подключить оплаты и CRM?</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-integrations" role="region" aria-labelledby="faq-trigger-integrations">
+              <div class="faq-answer-inner">
+                <p>Да. Подключаем платёжные системы, CRM, базы данных, админ-панели и другие сервисы по API.</p>
+              </div>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary>Как быстро можно запуститься?</summary>
-            <p>Зависит от объёма и интеграций. Простой сценарий можно выпустить заметно быстрее сложного Mini App — конкретный срок называем после короткого разбора задачи.</p>
-          </details>
+          <div class="faq-item">
+            <button class="faq-trigger" type="button" id="faq-trigger-timing" aria-expanded="true" aria-controls="faq-answer-timing">
+              <span>Как быстро можно запуститься?</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-timing" role="region" aria-labelledby="faq-trigger-timing">
+              <div class="faq-answer-inner">
+                <p>Зависит от объёма и интеграций. Простой сценарий можно выпустить заметно быстрее сложного Mini App — конкретный срок называем после короткого разбора задачи.</p>
+              </div>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary>Что происходит после релиза?</summary>
-            <p>Можем взять на себя размещение, мониторинг, исправления и дальнейшее развитие продукта. Формат поддержки согласуем до запуска.</p>
-          </details>
+          <div class="faq-item">
+            <button class="faq-trigger" type="button" id="faq-trigger-support" aria-expanded="true" aria-controls="faq-answer-support">
+              <span>Что происходит после релиза?</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-support" role="region" aria-labelledby="faq-trigger-support">
+              <div class="faq-answer-inner">
+                <p>Можем взять на себя размещение, мониторинг, исправления и дальнейшее развитие продукта. Формат поддержки согласуем до запуска.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -444,6 +474,6 @@
     <span class="telegram-cursor-plane"></span>
   </div>
 
-  <script type="module" src="script.js?v=20260722-5"></script>
+  <script type="module" src="script.js?v=20260722-6"></script>
 </body>
 </html>

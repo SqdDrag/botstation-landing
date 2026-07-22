@@ -41,14 +41,34 @@
     });
   }
 
-  document.querySelectorAll('.faq-item').forEach(function (item) {
-    item.addEventListener('toggle', function () {
-      if (!item.open) return;
-      document.querySelectorAll('.faq-item[open]').forEach(function (other) {
-        if (other !== item) other.removeAttribute('open');
+  var faqList = document.querySelector('.faq-list');
+  var faqItems = document.querySelectorAll('.faq-item');
+
+  faqItems.forEach(function (item) {
+    var trigger = item.querySelector('.faq-trigger');
+    var answer = item.querySelector('.faq-answer');
+
+    if (!trigger || !answer) return;
+
+    trigger.setAttribute('aria-expanded', 'false');
+    answer.setAttribute('aria-hidden', 'true');
+
+    trigger.addEventListener('click', function () {
+      var shouldOpen = !item.classList.contains('is-open');
+
+      faqItems.forEach(function (otherItem) {
+        var otherTrigger = otherItem.querySelector('.faq-trigger');
+        var otherAnswer = otherItem.querySelector('.faq-answer');
+        var isCurrentItem = otherItem === item && shouldOpen;
+
+        otherItem.classList.toggle('is-open', isCurrentItem);
+        if (otherTrigger) otherTrigger.setAttribute('aria-expanded', String(isCurrentItem));
+        if (otherAnswer) otherAnswer.setAttribute('aria-hidden', String(!isCurrentItem));
       });
     });
   });
+
+  if (faqList) faqList.classList.add('is-ready');
 
   if (telegramCursor && finePointer.matches) {
     var cursorX = -80;
