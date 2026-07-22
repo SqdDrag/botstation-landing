@@ -1135,6 +1135,26 @@ img {
   color: rgba(255, 255, 255, .72);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .faq-item[open] > p {
+    animation: faq-reveal .4s var(--ease) both;
+  }
+}
+
+@keyframes faq-reveal {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100%);
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: none;
+  }
+}
+
 .contact {
   position: relative;
   padding: clamp(86px, 12vw, 164px) 0;
@@ -1174,7 +1194,12 @@ img {
   font-size: clamp(50px, 7.6vw, 110px);
   font-weight: 800;
   letter-spacing: -.07em;
-  line-height: .92;
+  line-height: .98;
+}
+
+.contact-title-line {
+  display: block;
+  padding-top: .1em;
 }
 
 .contact-side {
@@ -1589,5 +1614,18 @@ img {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body {
+    cursor: url("telegram-cursor-32.png") 16 16, auto;
+  }
+
+  a,
+  button,
+  .faq-item summary {
+    cursor: url("telegram-cursor-32.png") 16 16, pointer;
   }
 }
