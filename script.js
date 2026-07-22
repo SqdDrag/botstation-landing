@@ -137,7 +137,7 @@
                 .7152 * colorChannelToLinear(Number(channels[1])) +
                 .0722 * colorChannelToLinear(Number(channels[2]));
 
-              return luminance < .08;
+              return luminance < .18;
             }
           }
         }
