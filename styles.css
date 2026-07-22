@@ -359,6 +359,7 @@ img {
 
 .hero h1 .indent {
   display: block;
+  margin-top: .1em;
   padding-left: .72em;
 }
 
@@ -484,7 +485,9 @@ img {
 .message-client {
   align-self: flex-end;
   border-bottom-right-radius: 5px;
-  background: var(--blue);
+  background: var(--paper-bright);
+  color: var(--ink);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .18);
 }
 
 .message-bot {
@@ -500,6 +503,10 @@ img {
   color: rgba(255, 255, 255, .5);
   font-family: "IBM Plex Mono", monospace;
   font-size: 9px;
+}
+
+.message-client small {
+  color: rgba(16, 17, 15, .5);
 }
 
 .event-stack {
@@ -962,10 +969,13 @@ img {
 }
 
 .product-thumb {
+  display: block;
   width: 58px;
   height: 58px;
   border-radius: 14px;
   background: var(--blue-soft);
+  object-fit: cover;
+  box-shadow: inset 0 0 0 1px rgba(16, 17, 15, .08);
 }
 
 .product-row:nth-child(3) .product-thumb {
