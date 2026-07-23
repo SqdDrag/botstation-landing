@@ -91,12 +91,13 @@
     var cursorVisible = false;
     var cursorInitialized = false;
     var trailContext = telegramCursorTrail ? telegramCursorTrail.getContext('2d') : null;
-    var cursorParticles = [];
-    var particleDistance = 0;
+    var cursorTrailPoints = [];
+    var trailSampleDistance = 0;
     var trailPixelRatio = 1;
     var trailDirtyBounds = null;
     var lastFrameTime = 0;
     var cursorSurfaceElement = null;
+    var cursorTrailOnDark = false;
     var cursorUsesScrollHeading = false;
     var lastScrollPosition = window.scrollY;
     var interactiveSelector = 'a, button, summary, input, textarea, select, label, [role="button"]';
@@ -109,6 +110,8 @@
       telegramCursorTrail.height = Math.max(1, Math.round(window.innerHeight * trailPixelRatio));
       trailContext.setTransform(trailPixelRatio, 0, 0, trailPixelRatio, 0, 0);
       trailDirtyBounds = null;
+      cursorTrailPoints.length = 0;
+      trailSampleDistance = 0;
       cursorSurfaceElement = null;
       if (cursorVisible) scheduleCursorFrame();
     }
@@ -159,7 +162,8 @@
       if (sampledElement === cursorSurfaceElement) return;
 
       cursorSurfaceElement = sampledElement;
-      telegramCursor.classList.toggle('is-on-dark', isDarkSurface(sampledElement));
+      cursorTrailOnDark = isDarkSurface(sampledElement);
+      telegramCursor.classList.toggle('is-on-dark', cursorTrailOnDark);
     }
 
     function invalidateCursorSurface() {
@@ -189,7 +193,7 @@
     function clearCursorTrail() {
       if (!trailContext || !trailDirtyBounds) return;
 
-      var padding = 5;
+      var padding = 9;
       trailContext.clearRect(
         trailDirtyBounds.left - padding,
         trailDirtyBounds.top - padding,
@@ -216,29 +220,18 @@
       trailDirtyBounds.bottom = Math.max(trailDirtyBounds.bottom, y + radius);
     }
 
-    function addCursorParticle(x, y, directionX, directionY) {
-      var sideX = -directionY;
-      var sideY = directionX;
-      var sideOffset = (Math.random() - .5) * 7;
-      var backwardSpeed = .35 + Math.random() * .55;
-      var sideSpeed = (Math.random() - .5) * .38;
-      var colorRoll = Math.random();
-
-      cursorParticles.push({
-        x: x - directionX * 15 + sideX * sideOffset,
-        y: y - directionY * 15 + sideY * sideOffset,
-        velocityX: -directionX * backwardSpeed + sideX * sideSpeed,
-        velocityY: -directionY * backwardSpeed + sideY * sideSpeed,
-        size: 1 + Math.random() * 2.2,
+    function addCursorTrailPoint(x, y, onDark) {
+      cursorTrailPoints.push({
+        x: x,
+        y: y,
         life: 1,
-        fade: .026 + Math.random() * .018,
-        color: colorRoll < .58 ? '47, 91, 255' : (colorRoll < .82 ? '16, 17, 15' : '201, 255, 69')
+        color: onDark ? '251, 250, 246' : '47, 91, 255'
       });
 
-      if (cursorParticles.length > 90) cursorParticles.shift();
+      if (cursorTrailPoints.length > 64) cursorTrailPoints.shift();
     }
 
-    function emitCursorParticles(previousX, previousY, nextX, nextY) {
+    function recordCursorTrail(previousX, previousY, nextX, nextY, startedOnDark, endedOnDark) {
       if (!trailContext || reduceMotion || !cursorVisible) return;
 
       var deltaX = nextX - previousX;
@@ -247,59 +240,80 @@
 
       if (distance < .1) return;
 
-      particleDistance += distance;
-      var particleCount = Math.min(10, Math.floor(particleDistance / 7));
+      trailSampleDistance += distance;
+      var pointCount = Math.min(16, Math.floor(trailSampleDistance / 4));
 
-      if (!particleCount) return;
+      if (!pointCount) return;
 
-      particleDistance %= 7;
+      trailSampleDistance %= 4;
       var directionX = deltaX / distance;
       var directionY = deltaY / distance;
 
-      for (var index = 0; index < particleCount; index += 1) {
-        var progress = (index + 1) / (particleCount + 1);
-        addCursorParticle(
-          previousX + deltaX * progress,
-          previousY + deltaY * progress,
-          directionX,
-          directionY
+      for (var index = 0; index < pointCount; index += 1) {
+        var progress = (index + 1) / (pointCount + 1);
+        addCursorTrailPoint(
+          previousX + deltaX * progress - directionX * 15,
+          previousY + deltaY * progress - directionY * 15,
+          progress < .5 ? startedOnDark : endedOnDark
         );
       }
     }
 
-    function renderCursorParticles(frameScale) {
+    function renderCursorTrail(frameScale) {
       if (!trailContext) return;
 
       clearCursorTrail();
 
-      for (var index = cursorParticles.length - 1; index >= 0; index -= 1) {
-        var particle = cursorParticles[index];
+      for (var index = cursorTrailPoints.length - 1; index >= 0; index -= 1) {
+        var point = cursorTrailPoints[index];
+        point.life -= .034 * frameScale;
 
-        particle.x += particle.velocityX * frameScale;
-        particle.y += particle.velocityY * frameScale;
-        particle.velocityX *= Math.pow(.97, frameScale);
-        particle.velocityY *= Math.pow(.97, frameScale);
-        particle.life -= particle.fade * frameScale;
+        if (point.life <= 0) cursorTrailPoints.splice(index, 1);
+      }
 
-        if (particle.life <= 0) {
-          cursorParticles.splice(index, 1);
-          continue;
-        }
+      trailContext.lineCap = 'round';
+      trailContext.lineJoin = 'round';
 
-        var particleRadius = particle.size * (.55 + particle.life * .45);
+      for (var segmentIndex = 1; segmentIndex < cursorTrailPoints.length; segmentIndex += 1) {
+        var previousPoint = cursorTrailPoints[segmentIndex - 1];
+        var currentPoint = cursorTrailPoints[segmentIndex];
+        var nextPoint = cursorTrailPoints[segmentIndex + 1];
+        var startX = segmentIndex === 1
+          ? previousPoint.x
+          : (previousPoint.x + currentPoint.x) / 2;
+        var startY = segmentIndex === 1
+          ? previousPoint.y
+          : (previousPoint.y + currentPoint.y) / 2;
+        var endX = nextPoint
+          ? (currentPoint.x + nextPoint.x) / 2
+          : currentPoint.x;
+        var endY = nextPoint
+          ? (currentPoint.y + nextPoint.y) / 2
+          : currentPoint.y;
+        var strength = Math.max(0, Math.min(1, (previousPoint.life + currentPoint.life) / 2));
+        var lineWidth = .45 + 3.1 * Math.pow(strength, 1.55);
+        var lineAlpha = .05 + .58 * Math.pow(strength, 1.2);
+        var trailColor = 'rgb(' + currentPoint.color + ')';
 
-        trailContext.globalAlpha = Math.min(1, particle.life * 1.15);
-        trailContext.fillStyle = 'rgb(' + particle.color + ')';
         trailContext.beginPath();
-        trailContext.arc(
-          particle.x,
-          particle.y,
-          particleRadius,
-          0,
-          Math.PI * 2
-        );
-        trailContext.fill();
-        includeCursorTrailPoint(particle.x, particle.y, particleRadius);
+        trailContext.moveTo(startX, startY);
+        trailContext.quadraticCurveTo(currentPoint.x, currentPoint.y, endX, endY);
+        trailContext.globalAlpha = lineAlpha * .16;
+        trailContext.lineWidth = lineWidth + 3.2;
+        trailContext.strokeStyle = trailColor;
+        trailContext.stroke();
+
+        trailContext.beginPath();
+        trailContext.moveTo(startX, startY);
+        trailContext.quadraticCurveTo(currentPoint.x, currentPoint.y, endX, endY);
+        trailContext.globalAlpha = lineAlpha;
+        trailContext.lineWidth = lineWidth;
+        trailContext.strokeStyle = trailColor;
+        trailContext.stroke();
+
+        includeCursorTrailPoint(startX, startY, lineWidth + 4);
+        includeCursorTrailPoint(currentPoint.x, currentPoint.y, lineWidth + 4);
+        includeCursorTrailPoint(endX, endY, lineWidth + 4);
       }
 
       trailContext.globalAlpha = 1;
@@ -328,6 +342,7 @@
       var angleFollow = reduceMotion ? 1 : frameAdjustedFollow(.14, frameScale);
       var previousX = cursorX;
       var previousY = cursorY;
+      var trailStartedOnDark = cursorTrailOnDark;
 
       cursorX += (cursorTargetX - cursorX) * follow;
       cursorY += (cursorTargetY - cursorY) * follow;
@@ -338,7 +353,15 @@
       cursorVelocityX += (frameVelocityX - cursorVelocityX) * velocityFollow;
       cursorVelocityY += (frameVelocityY - cursorVelocityY) * velocityFollow;
 
-      emitCursorParticles(previousX, previousY, cursorX, cursorY);
+      updateCursorSurface();
+      recordCursorTrail(
+        previousX,
+        previousY,
+        cursorX,
+        cursorY,
+        trailStartedOnDark,
+        cursorTrailOnDark
+      );
 
       if (
         !cursorUsesScrollHeading &&
@@ -355,8 +378,7 @@
         'translate3d(' + cursorX.toFixed(2) + 'px, ' + cursorY.toFixed(2) + 'px, 0) ' +
         'rotate(' + cursorAngle.toFixed(2) + 'deg)';
 
-      updateCursorSurface();
-      renderCursorParticles(frameScale);
+      renderCursorTrail(frameScale);
 
       if (
         cursorVisible &&
@@ -366,7 +388,7 @@
           Math.abs(cursorTargetAngle - cursorAngle) > .1 ||
           Math.abs(cursorVelocityX) > .01 ||
           Math.abs(cursorVelocityY) > .01 ||
-          cursorParticles.length > 0)
+          cursorTrailPoints.length > 0)
       ) {
         scheduleCursorFrame();
       }
@@ -396,9 +418,10 @@
         cursorFrame = 0;
       }
 
-      cursorParticles.length = 0;
-      particleDistance = 0;
+      cursorTrailPoints.length = 0;
+      trailSampleDistance = 0;
       cursorSurfaceElement = null;
+      cursorTrailOnDark = false;
       clearCursorTrail();
       document.documentElement.classList.remove('telegram-cursor-active');
       telegramCursor.classList.remove('is-visible', 'is-interactive', 'is-pressed', 'is-on-dark');
@@ -408,8 +431,8 @@
       reduceMotion = event.matches;
 
       if (reduceMotion) {
-        cursorParticles.length = 0;
-        particleDistance = 0;
+        cursorTrailPoints.length = 0;
+        trailSampleDistance = 0;
         clearCursorTrail();
       }
 
